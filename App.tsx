@@ -15,7 +15,7 @@ const App = () => {
     useEffect(() => {
         const timeOut = setTimeout(() => {
             setIsShowWelcome(false)
-        }, 2000)
+        }, 1000)
         return () => clearTimeout(timeOut)
     }, [])
 
