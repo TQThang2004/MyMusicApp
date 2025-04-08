@@ -13,7 +13,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Feather';
 import { appColor } from '../../constants/appColor';
 
-const Login = () => {
+const Login = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
@@ -80,7 +80,7 @@ const Login = () => {
         <InputComponent
           value={password}
           onChange={val => setPassword(val)}
-          placeholder="Enter your email"
+          placeholder="Enter your password"
           isPassword
           affix={<Icon1 name="lock" size={20} color="gray" />}
 
@@ -109,6 +109,7 @@ const Login = () => {
             text=' Register'
             type='link'
             textStyles={{ fontSize: 16 }}
+            onPress={() => navigation.navigate('RegisterScreen')}
           />
         </RowComponent>
 
