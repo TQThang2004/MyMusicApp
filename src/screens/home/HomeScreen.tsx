@@ -11,24 +11,51 @@ import {
 
 const trendingSongs = [
   { id: '1', title: 'Hold Me Closer', artist: 'Britney Spears', image: require('../../assets/images/logo.png') },
+  { id: '2', title: 'Under The Influence', artist: 'Chris Brown', image: require('../../assets/images/logo.png') },
+  { id: '2', title: 'Under The Influence', artist: 'Chris Brown', image: require('../../assets/images/logo.png') },
   { id: '2', title: 'Under The Influence', artist: 'Chris Brown', image: require('../../assets/images/logo.png') }
 ];
 
 const topPlaylists = [
   { id: '1', title: 'Bollywood Romance', image: require('../../assets/images/logo.png') },
+  { id: '2', title: 'New Music Daily', image: require('../../assets/images/logo.png') },
+  { id: '2', title: 'New Music Daily', image: require('../../assets/images/logo.png') },
   { id: '2', title: 'New Music Daily', image: require('../../assets/images/logo.png') }
 ];
 
 const favoriteArtists = [
   { id: '1', name: 'Armaan Malik', image: require('../../assets/images/logo.png') },
   { id: '2', name: 'Justin Bieber', image: require('../../assets/images/logo.png') },
+  { id: '3', name: 'Katy Perry', image: require('../../assets/images/logo.png') },
+  { id: '3', name: 'Katy Perry', image: require('../../assets/images/logo.png') },
   { id: '3', name: 'Katy Perry', image: require('../../assets/images/logo.png') }
 ];
 
 const popularSongs = [
-  { id: '1', title: 'Headlights', artist: 'Alok & Alan Walker' },
-  { id: '2', title: 'I am Good (Blue)', artist: 'David Guetta' },
-  { id: '3', title: 'Besharam Rang', artist: 'Arijit Singh' }
+  {
+    id: '1',
+    title: 'Headlights (feat. Kiddo)',
+    artist: 'Alok & Alan Walker',
+    image: require('../../assets/images/logo.png'),
+  },
+  {
+    id: '2',
+    title: 'I am Good (Blue)',
+    artist: 'David Guetta',
+    image: require('../../assets/images/logo.png'),
+  },
+  {
+    id: '3',
+    title: 'Besharam Rang',
+    artist: 'Dhvani Bhanushali',
+    image: require('../../assets/images/logo.png'),
+  },
+  {
+    id: '4',
+    title: 'Jhoome Jo Pathaan',
+    artist: 'Vishal & Shekhar',
+    image: require('../../assets/images/logo.png'),
+  },
 ];
 
 const HomeScreen = () => {

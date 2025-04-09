@@ -7,7 +7,7 @@ import HomeNavigator from './src/navigators/HomeNavigator';
 
 const App = () => {
   const [isShowWelcome, setIsShowWelcome] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false); // dùng để điều hướng
+  const [isLoggedIn, setIsLoggedIn] = useState(false); 
 
   useEffect(() => {
     const timeout = setTimeout(() => {
