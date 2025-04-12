@@ -1,17 +1,51 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import React from 'react'
-import { HomeScreen } from '../screens'
-import PlayScreen from '../screens/PlayScreen'
+// src/navigators/HomeNavigator.jsx
+import React, { useState } from 'react';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { HomeScreen, SearchScreen, PlayListScreen, ProfileScreen } from '../screens';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+
+const Tab = createBottomTabNavigator();
 
 const HomeNavigator = () => {
+    const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
+  return (
+    <>
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarShowLabel: false,
+        tabBarStyle: {
+          backgroundColor: 'white',
+          borderTopWidth: 0,
+          elevation: 0,
+          height: 60,
+        },
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName = 'home';
 
-    const Stack = createNativeStackNavigator()
-    return (
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-            <Stack.Screen name="HomeScreen" component={HomeScreen} />
-            <Stack.Screen name="PlayScreen" component={PlayScreen} />
-        </Stack.Navigator>
-    )
-}
+          if (route.name === 'Home') {
+            iconName = focused ? 'home' : 'home-outline';
+          } else if (route.name === 'Search') {
+            iconName = focused ? 'search' : 'search-outline';
+          } else if (route.name === 'PlayList') {
+            iconName = focused ? 'play-circle' : 'play-circle-outline';
+          } else if (route.name === 'Profile') {
+            iconName = focused ? 'person' : 'person-outline';
+          }
 
-export default HomeNavigator
+          return <Ionicons name={iconName} size={28} color={focused ? '#1DB954' : 'gray'} />;
+        },
+      })}
+    >
+      <Tab.Screen name="Home">
+        {(props) => <HomeScreen {...props} setIsBottomSheetOpen={setIsBottomSheetOpen} />}
+      </Tab.Screen>
+      <Tab.Screen name="Search" component={SearchScreen} />
+      <Tab.Screen name="PlayList" component={PlayListScreen} />
+      <Tab.Screen name="Profile" component={ProfileScreen} />
+    </Tab.Navigator>
+    </>
+  );
+};
+
+export default HomeNavigator;

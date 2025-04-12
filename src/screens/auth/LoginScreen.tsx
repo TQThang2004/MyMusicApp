@@ -18,6 +18,13 @@ const Login = ({ navigation }: { navigation: any }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+<<<<<<< HEAD
+=======
+  const handleLogin = () => {
+    setIsLoggedIn(true); // Gọi từ App
+  };
+
+>>>>>>> fuc
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, paddingHorizontal: 20, backgroundColor: 'white' }}
