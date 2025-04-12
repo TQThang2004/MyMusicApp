@@ -6,7 +6,6 @@ const LoginScreen = ({ navigation, setIsLoggedIn }: any) => {
   const [password, setPassword] = useState('');
 
   const handleLogin = () => {
-    // Nếu không kiểm tra gì, thì:
     setIsLoggedIn(true); // Gọi từ App
   };
 
