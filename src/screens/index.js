@@ -4,12 +4,15 @@ import ProfileScreen from './profile/ProfileScreen';
 import PlayListScreen from './playlist/PlayListScreen';
 import LoginScreen from './auth/LoginScreen';
 import WelcomeScreen from './WelcomScreen';
-
+import SongDetailScreen from './song/SongDetailScreen';
+import SearchScreen from './search/SearchScreen.tsx';
 export {
     HomeScreen,
-    SearchScreen,
     ProfileScreen,
     PlayListScreen,
     LoginScreen,
     WelcomeScreen,
+    SongDetailScreen,
+    SearchScreen,
+
 }

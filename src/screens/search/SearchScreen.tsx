@@ -1,154 +1,169 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
-  Image,
-  StyleSheet,
   TextInput,
+  StyleSheet,
+  TouchableOpacity,
   FlatList,
-  ScrollView,
+  Image,
 } from 'react-native';
 
-const trendingSongs = [
-  { id: '1', title: 'Hold Me Closer', artist: 'Britney Spears', image: require('../../assets/images/logo.png') },
-  { id: '2', title: 'Under The Influence', artist: 'Chris Brown', image: require('../../assets/images/logo.png') },
-  { id: '3', title: 'Under The Influence', artist: 'Chris Brown', image: require('../../assets/images/logo.png') },
-  { id: '4', title: 'Under The Influence', artist: 'Chris Brown', image: require('../../assets/images/logo.png') }
-];
+const filters = ['All', 'Artist', 'Album', 'Playlist'];
 
-const topPlaylists = [
-  { id: '1', title: 'Bollywood Romance', image: require('../../assets/images/logo.png') },
-  { id: '2', title: 'New Music Daily', image: require('../../assets/images/logo.png') },
-  { id: '3', title: 'New Music Daily', image: require('../../assets/images/logo.png') },
-  { id: '4', title: 'New Music Daily', image: require('../../assets/images/logo.png') }
-];
-
-const favoriteArtists = [
-  { id: '1', name: 'Armaan Malik', image: require('../../assets/images/logo.png') },
-  { id: '2', name: 'Justin Bieber', image: require('../../assets/images/logo.png') },
-  { id: '3', name: 'Katy Perry', image: require('../../assets/images/logo.png') },
-  { id: '4', name: 'Katy Perry', image: require('../../assets/images/logo.png') },
-  { id: '5', name: 'Katy Perry', image: require('../../assets/images/logo.png') }
-];
-
-const popularSongs = [
+const results = [
   {
     id: '1',
-    title: 'Headlights (feat. Kiddo)',
-    artist: 'Alok & Alan Walker',
-    image: require('../../assets/images/logo.png'),
+    title: 'Pehla Pyaar',
+    subtitle: 'Kabir Singh',
+    image: 'https://i.scdn.co/image/ab67616d0000b273c5545f737b16ad5ee767b62a',
   },
   {
     id: '2',
-    title: 'I am Good (Blue)',
-    artist: 'David Guetta',
-    image: require('../../assets/images/logo.png'),
+    title: 'Jab Tak',
+    subtitle: 'M.S Dhoni: The Untold Story',
+    image: 'https://i.ytimg.com/vi/K-Ts-NFR62o/maxresdefault.jpg',
   },
   {
     id: '3',
-    title: 'Besharam Rang',
-    artist: 'Dhvani Bhanushali',
-    image: require('../../assets/images/logo.png'),
+    title: 'I am Good (Blue)',
+    subtitle: 'David Guetta',
+    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9kBGM9omB8Kz0At_gsZg31FWDnYk4ypFUMA&s',
   },
   {
     id: '4',
+    title: 'Bol Do Na Zara',
+    subtitle: 'Azhar',
+    image: 'https://i.ytimg.com/vi/EpEraRui1pc/maxresdefault.jpg',
+  },
+  {
+    id: '5',
     title: 'Jhoome Jo Pathaan',
-    artist: 'Vishal & Shekhar',
-    image: require('../../assets/images/logo.png'),
+    subtitle: 'Vishal & Shekhar',
+    image: 'https://upload.wikimedia.org/wikipedia/en/8/8b/Jhoome_Jo_Pathaan_song_cover.jpg',
   },
 ];
 
-const SearchScreen = () => {
-  const renderHeader = () => (
-    <View>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.welcome}>Search 👋</Text>
-        <Text style={styles.subtitle}>What you want to hear today?</Text>
-        <TextInput style={styles.searchInput} placeholder="Search" />
-      </View>
-
-      {/* Trending Songs */}
-      <Text style={styles.sectionTitle}>Trending Song</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {trendingSongs.map(song => (
-          <View key={song.id} style={styles.card}>
-            <Image source={song.image} style={styles.cardImage} />
-            <Text style={styles.cardTitle}>{song.title}</Text>
-            <Text style={styles.cardSubtitle}>{song.artist}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Top Playlists */}
-      <Text style={styles.sectionTitle}>Top Playlists</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {topPlaylists.map(playlist => (
-          <View key={playlist.id} style={styles.card}>
-            <Image source={playlist.image} style={styles.cardImage} />
-            <Text style={styles.cardTitle}>{playlist.title}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Favourite Artists */}
-      <Text style={styles.sectionTitle}>Favourite Artists</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {favoriteArtists.map(artist => (
-          <View key={artist.id} style={styles.artistCard}>
-            <Image source={artist.image} style={styles.artistImage} />
-            <Text style={styles.cardTitle}>{artist.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Popular Songs */}
-      <Text style={styles.sectionTitle}>Popular Songs</Text>
-    </View>
-  );
+const SearchScreen = ({navigation}:any) => {
+  const [activeFilter, setActiveFilter] = useState('All');
 
   return (
-    <FlatList
-      data={popularSongs}
-      keyExtractor={item => item.id}
-      ListHeaderComponent={renderHeader}
-      renderItem={({ item }) => (
-        <View style={styles.songRow}>
-          <Text style={styles.songTitle}>{item.title}</Text>
-          <Text style={styles.songArtist}>{item.artist}</Text>
-        </View>
-      )}
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    />
+    <View style={styles.container}>
+      <TextInput
+        placeholder="Search"
+        style={styles.searchInput}
+        placeholderTextColor="#999"
+      />
+
+      <Text style={styles.topResult}>Top Result</Text>
+
+      <View style={styles.filterRow}>
+        {filters.map((filter) => (
+          <TouchableOpacity
+            key={filter}
+            onPress={() => setActiveFilter(filter)}
+            style={[
+              styles.filterButton,
+              activeFilter === filter && styles.activeFilterButton,
+            ]}
+          >
+            <Text
+              style={[
+                styles.filterText,
+                activeFilter === filter && styles.activeFilterText,
+              ]}
+            >
+              {filter}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
+      <FlatList
+  data={results}
+  keyExtractor={(item) => item.id}
+  renderItem={({ item }) => (
+    <TouchableOpacity
+      style={styles.resultRow}
+      onPress={() => navigation.navigate('SongDetailScreen')}
+    >
+      <Image source={{ uri: item.image }} style={styles.resultImage} />
+      <View style={styles.resultText}>
+        <Text style={styles.resultTitle}>{item.title}</Text>
+        <Text style={styles.resultSubtitle}>{item.subtitle}</Text>
+      </View>
+    </TouchableOpacity>
+  )}
+/>
+
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#fff' },
-  header: { marginBottom: 20 },
-  welcome: { fontSize: 24, fontWeight: 'bold', color: 'black' },
-  subtitle: { fontSize: 16, color: 'gray', marginBottom: 10 },
-  searchInput: {
-    backgroundColor: '#f2f2f2',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    height: 40
-  },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginVertical: 10 },
-  card: { marginRight: 15, width: 150 },
-  cardImage: { width: 150, height: 150, borderRadius: 10 },
-  cardTitle: { fontWeight: 'bold', marginTop: 5, color: 'black' },
-  cardSubtitle: { color: 'gray' },
-  artistCard: { marginRight: 15, alignItems: 'center' },
-  artistImage: { width: 80, height: 80, borderRadius: 40 },
-  songRow: {
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee'
-  },
-  songTitle: { fontWeight: 'bold', fontSize: 16, color: 'black' },
-  songArtist: { color: 'gray' }
-});
-
 export default SearchScreen;
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: 'white',
+    paddingTop: 60,
+    paddingHorizontal: 24,
+  },
+  searchInput: {
+    backgroundColor: '#F0F0F0',
+    borderRadius: 14,
+    paddingHorizontal: 18,
+    paddingVertical: 14,
+    fontSize: 18,
+    marginBottom: 24,
+  },
+  topResult: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    marginBottom: 14,
+  },
+  filterRow: {
+    flexDirection: 'row',
+    marginBottom: 24,
+  },
+  filterButton: {
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    backgroundColor: '#e6e6e6',
+    borderRadius: 10,
+    marginRight: 12,
+  },
+  activeFilterButton: {
+    backgroundColor: '#2196F3',
+  },
+  filterText: {
+    color: 'black',
+    fontSize: 16,
+  },
+  activeFilterText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
+  resultRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 22,
+  },
+  resultImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 10,
+    marginRight: 18,
+  },
+  resultText: {
+    flex: 1,
+  },
+  resultTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  resultSubtitle: {
+    fontSize: 16,
+    color: 'gray',
+  },
+});

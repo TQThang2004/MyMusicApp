@@ -11,6 +11,7 @@ const App = () => {
   const [isShowWelcome, setIsShowWelcome] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+
   useEffect(() => {
     const timeout = setTimeout(() => {
       setIsShowWelcome(false);
@@ -42,3 +43,4 @@ const App = () => {
 };
 
 export default App;
+
