@@ -5,10 +5,11 @@ import { NavigationContainer } from '@react-navigation/native'
 import { StatusBar } from 'react-native'
 import { useAsyncStorage } from '@react-native-async-storage/async-storage'
 import HomeNavigator from './src/navigators/HomeNavigator'
+import BottomTabNavigator from "./src/navigators/TabNavigator";
 
 const App = () => {
     const [isShowWelcome, setIsShowWelcome] = useState(true)
-    const [accessToken, setAccessToken] = useState('')
+    const [accessToken, setAccessToken] = useState('123')
 
     const {getItem, setItem} = useAsyncStorage('accessToken')
 
@@ -33,7 +34,7 @@ const App = () => {
         {
             isShowWelcome ? <WelcomeScreen /> : <NavigationContainer>
                 {
-                    accessToken ? <HomeNavigator /> : <AuthNavigator />
+                    accessToken ? <BottomTabNavigator /> : <AuthNavigator />
                 }
             </NavigationContainer>
         }
