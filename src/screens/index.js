@@ -5,7 +5,7 @@ import PlayListScreen from './playlist/PlayListScreen';
 import LoginScreen from './auth/LoginScreen';
 import WelcomeScreen from './WelcomScreen';
 import SongDetailScreen from './song/SongDetailScreen';
-import SearchScreen from './search/SearchScreen.tsx';
+
 export {
     HomeScreen,
     ProfileScreen,
