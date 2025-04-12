@@ -14,17 +14,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Feather';
 import { appColor } from '../../constants/appColor';
 
-const Login = ({ navigation }: { navigation: any }) => {
+const Login = ({ navigation, setIsLoggedIn }: any ) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-<<<<<<< HEAD
-=======
   const handleLogin = () => {
-    setIsLoggedIn(true); // Gọi từ App
-  };
+    setIsLoggedIn(true)
+  }
 
->>>>>>> fuc
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, paddingHorizontal: 20, backgroundColor: 'white' }}
@@ -104,6 +101,7 @@ const Login = ({ navigation }: { navigation: any }) => {
         <ButtonComponent
           type="primary"
           text="Login"
+          onPress={handleLogin}
           color={appColor.blue200}
           textStyles={{ fontSize: 16 }}
         />
