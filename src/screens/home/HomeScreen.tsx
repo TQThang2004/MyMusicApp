@@ -10,27 +10,84 @@ import {
 } from 'react-native';
 import homeStyles from './HomeStyles';
 import SongBottomSheet, { SongBottomSheetRef } from '../../components/SongBottomSheet';
+import TrackPlayer from 'react-native-track-player';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../../../config/firebaseConfig';
 
-interface HomeScreenProps {
-  setIsBottomSheetOpen: (isOpen: boolean) => void;
-}
 
-const HomeScreen: React.FC<HomeScreenProps> = ({ setIsBottomSheetOpen }) => {
+const HomeScreen = ({ navigation, setIsBottomSheetOpen }:any) => {
   // Di chuyển tất cả dữ liệu vào trong component
   const trendingSongs = useMemo(() => [
-    { id: '1', title: 'Ojos Tristes', artist: 'Unkown', image: require('../../assets/images/ojos_tristes.png') },
-    { id: '2', title: 'Goodbye Rocky', artist: 'DangRangTo', image: require('../../assets/images/goodbye_rocky.jpg') },
-    { id: '3', title: 'Loveis', artist: 'DangRangTo', image: require('../../assets/images/loveis.jpg') },
-    { id: '4', title: 'Wrong Time', artist: 'DangRangTo, Puppy', image: require('../../assets/images/wrongtime.jpg') }
+    { id: '1', title: 'Ojos Tristes', artist: 'Unkown', image: require('../../assets/images/ojos_tristes.png'),
+       url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3' },
+    { id: '2', title: 'Goodbye Rocky', artist: 'DangRangTo', image: require('../../assets/images/goodbye_rocky.jpg'),
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+     },
+    { id: '3', title: 'Loveis', artist: 'DangRangTo', image: require('../../assets/images/loveis.jpg'),
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+     },
+    { id: '4', title: 'Wrong Time', artist: 'DangRangTo, Puppy', image: require('../../assets/images/wrongtime.jpg'),
+      url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3'
+     }
   ], []);
 
   const topPlaylists = useMemo(() => [...trendingSongs], [trendingSongs]);
-  const favoriteArtists = useMemo(() => [
-    { id: '1', name: 'Armaan Malik', image: require('../../assets/images/logo.png') },
-    { id: '2', name: 'Justin Bieber', image: require('../../assets/images/logo.png') },
-    { id: '3', name: 'Katy Perry', image: require('../../assets/images/logo.png') }
-  ], []);
-  const popularSongs = useMemo(() => [...trendingSongs], [trendingSongs]);
+
+  const [popularSongs, setPopularSongs] = useState<any[]>([]);
+  const [artists, setArtists] = useState<any[]>([]);
+
+  useEffect(() => {
+    const fetchArtists = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, 'artists'));
+        const fetchedArtists = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setArtists(fetchedArtists);
+      } catch (error) {
+        console.error('Lỗi khi lấy artists từ Firebase:', error);
+      }
+    };
+
+    fetchArtists();
+  }, []);
+
+  useEffect(() => {
+    const fetchPopularSongs = async () => {
+      try {
+        const snapshot = await getDocs(collection(db, 'songs'));
+        const songs = snapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setPopularSongs(songs);
+      } catch (error) {
+        console.error('Lỗi khi lấy popularSongs từ Firebase:', error);
+      }
+    };
+
+    fetchPopularSongs();
+  }, []);
+
+  const handlePlay = async (item: any) => {
+    console.log("🎵 Playing from Firebase:", item.title);
+  
+    await TrackPlayer.reset();
+  
+    await TrackPlayer.add({
+      id: item.id,
+      url: item.url128, // dùng url128 từ Firebase
+      title: item.title,
+      artist: item.artists || 'Unknown',
+      artwork: item.thumbnail, // từ Firebase
+    });
+  
+    await TrackPlayer.play();
+  
+    navigation.navigate('Song', { song: item });
+  };
+  
 
   const bottomSheetRef = useRef<SongBottomSheetRef>(null);
   const [selectedSong, setSelectedSong] = useState<any>(null);
@@ -43,30 +100,45 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setIsBottomSheetOpen }) => {
 
   
 
-  const SongItem = React.memo(({ item, onPress }: { item: any, onPress: () => void }) => (
-    <View style={homeStyles.songItem}>
-      <Image source={item.image} style={homeStyles.songImage} />
-      <View style={homeStyles.songInfo}>
-        <Text style={homeStyles.songTitle}>{item.title}</Text>
-        <Text style={homeStyles.songArtist}>{item.artist}</Text>
-      </View>
-      <TouchableOpacity onPress={onPress}>
-        <Text style={homeStyles.options}>⋯</Text>
+  const SongItem = React.memo(({ item }: any) => {
+    // Kiểm tra nếu là ảnh từ Firebase (URL) thì dùng {uri}, còn không thì dùng require()
+    const isRemoteImage = typeof item.image === 'string' || item.thumbnail;
+  
+    return (
+      <TouchableOpacity onPress={() => handlePlay(item)}>
+        <View style={homeStyles.songItem}>
+          <Image
+            source={
+              isRemoteImage
+                ? { uri: item.image || item.thumbnail }
+                : item.image
+            }
+            style={homeStyles.songImage}
+          />
+          <View style={homeStyles.songInfo}>
+            <Text style={homeStyles.songTitle}>{item.title}</Text>
+            <Text style={homeStyles.songArtist}>{item.artist || item.artists}</Text>
+          </View>
+          <TouchableOpacity onPress={() => handleOpenBottomSheet(item)}>
+            <Text style={homeStyles.options}>⋯</Text>
+          </TouchableOpacity>
+        </View>
       </TouchableOpacity>
-    </View>
-  ));
+    );
+  });
+  
 
   const renderHeader = useCallback(() => (
-    <View>
-      {/* Header */}
-      <View style={homeStyles.header}>
-        <Text style={homeStyles.welcome}>Hey John 👋</Text>
-        <Text style={homeStyles.subtitle}>What you want to hear today?</Text>
-        <TextInput
-          style={homeStyles.searchInput}
-          placeholder="Search for songs, artists..."
-          placeholderTextColor="#999"
-        />
+      <View>
+        {/* Header */}
+        <View style={homeStyles.header}>
+          <Text style={homeStyles.welcome}>Hey John 👋</Text>
+          <Text style={homeStyles.subtitle}>What you want to hear today?</Text>
+          <TextInput
+            style={homeStyles.searchInput}
+            placeholder="Search for songs, artists..."
+            placeholderTextColor="#999"
+          />
       </View>
 
       {/* Trending Songs */}
@@ -100,28 +172,41 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setIsBottomSheetOpen }) => {
       {/* Favourite Artists */}
       <View style={homeStyles.flex}>
         <Text style={homeStyles.sectionTitle}>Favourite Artists</Text>
-        <TouchableOpacity onPress={() => console.log('See all pressed')}>
+        <TouchableOpacity 
+          onPress={() => navigation.navigate('FavoriteArtist')}
+        >
           <Text style={homeStyles.textSeeAll}>See all</Text>
         </TouchableOpacity>
+
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
-        {favoriteArtists.map(artist => (
-          <View key={artist.id} style={homeStyles.artistCard}>
-            <Image source={artist.image} style={homeStyles.artistImage} />
+      {artists.map(artist => (
+          <TouchableOpacity 
+            key={artist.id} 
+            style={homeStyles.artistCard}
+            onPress={() => navigation.navigate('ArtistScreen', { artist })}
+          >
+            <Image 
+              source={{ uri: artist.thumbnail }} 
+              style={homeStyles.artistImage} 
+            />
             <Text style={homeStyles.cardTitle}>{artist.name}</Text>
-          </View>
+          </TouchableOpacity>
         ))}
+
       </ScrollView>
 
       {/* Popular Songs */}
       <View style={homeStyles.flex}>
         <Text style={homeStyles.sectionTitle}>Popular Songs</Text>
-        <TouchableOpacity onPress={() => console.log('See all pressed')}>
+
+        <TouchableOpacity onPress={() => navigation.navigate('PopularSong')}>
           <Text style={homeStyles.textSeeAll}>See all</Text>
         </TouchableOpacity>
+
       </View>
     </View>
-  ), [trendingSongs, topPlaylists, favoriteArtists, handleOpenBottomSheet]);
+  ), [trendingSongs, topPlaylists, artists, handleOpenBottomSheet]);
 
   return (
     <>
@@ -132,7 +217,7 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ setIsBottomSheetOpen }) => {
         renderItem={({ item }) => (
           <SongItem 
             item={item} 
-            onPress={() => handleOpenBottomSheet(item)} 
+           
           />
         )}
         contentContainerStyle={homeStyles.container}

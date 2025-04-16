@@ -1,7 +1,7 @@
 // src/navigators/HomeNavigator.jsx
 import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreen, SearchScreen, PlayListScreen, ProfileScreen } from '../screens';
+import { HomeScreen, SearchScreen, PlaylistScreen, ProfileScreen } from '../screens';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const Tab = createBottomTabNavigator();
@@ -41,7 +41,7 @@ const HomeNavigator = () => {
         {(props) => <HomeScreen {...props} setIsBottomSheetOpen={setIsBottomSheetOpen} />}
       </Tab.Screen>
       <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="PlayList" component={PlayListScreen} />
+      <Tab.Screen name="PlayList" component={PlaylistScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
     </>
