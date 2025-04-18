@@ -8,6 +8,7 @@ import {
   FlatList,
   Image,
 } from 'react-native';
+import { SongItemComponent } from '../../components';
 
 const filters = ['All', 'Artist', 'Album', 'Playlist'];
 
@@ -44,7 +45,7 @@ const results = [
   },
 ];
 
-const SearchScreen = ({navigation}:any) => {
+const SearchScreen = ({ navigation }: any) => {
   const [activeFilter, setActiveFilter] = useState('All');
 
   return (
@@ -54,6 +55,8 @@ const SearchScreen = ({navigation}:any) => {
         style={styles.searchInput}
         placeholderTextColor="#999"
       />
+
+      
 
       <Text style={styles.topResult}>Top Result</Text>
 
@@ -80,21 +83,26 @@ const SearchScreen = ({navigation}:any) => {
       </View>
 
       <FlatList
-  data={results}
-  keyExtractor={(item) => item.id}
-  renderItem={({ item }) => (
-    <TouchableOpacity
-      style={styles.resultRow}
-      onPress={() => navigation.navigate('SongDetailScreen')}
-    >
-      <Image source={{ uri: item.image }} style={styles.resultImage} />
-      <View style={styles.resultText}>
-        <Text style={styles.resultTitle}>{item.title}</Text>
-        <Text style={styles.resultSubtitle}>{item.subtitle}</Text>
-      </View>
-    </TouchableOpacity>
-  )}
-/>
+        data={results}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          // <TouchableOpacity
+          //   style={styles.resultRow}
+          //   onPress={() => navigation.navigate('SongDetailScreen')}
+          // >
+          //   <Image source={{ uri: item.image }} style={styles.resultImage} />
+          //   <View style={styles.resultText}>
+          //     <Text style={styles.resultTitle}>{item.title}</Text>
+          //     <Text style={styles.resultSubtitle}>{item.subtitle}</Text>
+          //   </View>
+          // </TouchableOpacity>
+          <SongItemComponent
+            imageUrl={item.image}
+            songName={item.title}
+            artistName={item.subtitle}
+          />
+        )}
+      />
 
     </View>
   );
@@ -144,26 +152,7 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
-  resultRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 22,
-  },
-  resultImage: {
-    width: 64,
-    height: 64,
-    borderRadius: 10,
-    marginRight: 18,
-  },
   resultText: {
     flex: 1,
-  },
-  resultTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  resultSubtitle: {
-    fontSize: 16,
-    color: 'gray',
   },
 });
