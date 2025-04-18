@@ -6,7 +6,6 @@ import {
     ScrollView,
 } from 'react-native';
 import { ButtonComponent, InputComponent, RowComponent, SpaceComponent, TextComponent } from '../../components';
-import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Feather';
 import { appColor } from '../../constants/appColor';
 

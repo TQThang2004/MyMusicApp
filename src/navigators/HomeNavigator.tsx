@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen, SearchScreen, PlayListScreen, ProfileScreen } from '../screens';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import AddSongScreen from '../screens/playlist/AddSongScreen';
+import MyPlaylistScreen from '../screens/playlist/MyPlaylistScreen';
 
 const Tab = createBottomTabNavigator();
 
