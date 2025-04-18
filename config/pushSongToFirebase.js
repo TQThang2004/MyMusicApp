@@ -28,5 +28,4 @@ const debugHomeSections = async () => {
 debugHomeSections();
 
 
-debugHomeSections();
 

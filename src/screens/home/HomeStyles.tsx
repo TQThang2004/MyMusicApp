@@ -82,6 +82,7 @@ const homeStyles = StyleSheet.create({
     color: '#555',
     paddingHorizontal: 8,
   },
+  
 });
 
 export default homeStyles;

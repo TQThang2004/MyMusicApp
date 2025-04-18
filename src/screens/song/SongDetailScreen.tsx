@@ -44,8 +44,6 @@ const SongDetailScreen = ({ navigation, route }: any) => {
         style={styles.albumArt}
       />
 
-
-
       <View style={styles.songInfo}>
         <Text style={styles.songTitle}>{song.title}</Text>
         <Text style={styles.artist}>{song.artists}</Text>
