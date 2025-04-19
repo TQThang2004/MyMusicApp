@@ -46,7 +46,11 @@ const SongDetailScreen = ({ navigation, route }: any) => {
 
       <View style={styles.songInfo}>
         <Text style={styles.songTitle}>{song.title}</Text>
-        <Text style={styles.artist}>{song.artists}</Text>
+        <Text style={styles.artist}>
+          {Array.isArray(song.artists)
+            ? song.artists.map((a: { name: any; }) => a.name).join(', ')
+            : (song.artists?.name || song.artists || 'Unknown')}
+        </Text>
       </View>
 
       <View style={styles.iconRow}>
