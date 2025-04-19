@@ -19,7 +19,7 @@ import ZingChartScreen from '../zingChart/zingChart';
 
 const HomeScreen = ({ navigation, setIsBottomSheetOpen }:any) => {
 
-  const IP = '192.168.2.7';
+  const IP = '10.0.2.2';
   const PORT = '5000';
   
   const [home, setHomes] = useState([]);

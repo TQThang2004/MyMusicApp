@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
@@ -8,55 +8,128 @@ import {
   FlatList,
   Image,
 } from 'react-native';
-import { SongItemComponent } from '../../components';
 
-const filters = ['All', 'Artist', 'Album', 'Playlist'];
-
-const results = [
-  {
-    id: '1',
-    title: 'Pehla Pyaar',
-    subtitle: 'Kabir Singh',
-    image: 'https://i.scdn.co/image/ab67616d0000b273c5545f737b16ad5ee767b62a',
-  },
-  {
-    id: '2',
-    title: 'Jab Tak',
-    subtitle: 'M.S Dhoni: The Untold Story',
-    image: 'https://i.ytimg.com/vi/K-Ts-NFR62o/maxresdefault.jpg',
-  },
-  {
-    id: '3',
-    title: 'I am Good (Blue)',
-    subtitle: 'David Guetta',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9kBGM9omB8Kz0At_gsZg31FWDnYk4ypFUMA&s',
-  },
-  {
-    id: '4',
-    title: 'Bol Do Na Zara',
-    subtitle: 'Azhar',
-    image: 'https://i.ytimg.com/vi/EpEraRui1pc/maxresdefault.jpg',
-  },
-  {
-    id: '5',
-    title: 'Jhoome Jo Pathaan',
-    subtitle: 'Vishal & Shekhar',
-    image: 'https://upload.wikimedia.org/wikipedia/en/8/8b/Jhoome_Jo_Pathaan_song_cover.jpg',
-  },
-];
+const filters = ['All', 'Artist', 'Album', 'Playli'];
+const IP = '10.0.2.2';
+const PORT = '5000';
 
 const SearchScreen = ({ navigation }: any) => {
   const [activeFilter, setActiveFilter] = useState('All');
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState<any[]>([]);
+
+  useEffect(() => {
+    const delayDebounce = setTimeout(() => {
+      handleSearch();
+    }, 500);
+
+    return () => clearTimeout(delayDebounce);
+  }, [query]);
+
+  const handleSearch = async () => {
+    if (!query.trim()) {
+      setResults([]);
+      return;
+    }
+
+    try {
+      const res = await fetch(
+        `http://${IP}:${PORT}/api/search?keyword=${encodeURIComponent(query)}`
+      );
+
+      if (!res.ok) {
+        console.log('Fetch failed with status:', res.status);
+        return;
+      }
+
+      const json = await res.json();
+      let formattedResult: any[] = [];
+
+      if (json?.data?.top) {
+        const top = json.data.top;
+
+        if (top.objectType === 'artist') {
+          formattedResult.push({
+            id: top.id || 'artist-id',
+            title: top.name || 'Unknown Artist',
+            image: top.thumbnailM || top.thumbnail,
+            type: 'artist',
+          });
+        } else {
+          const artistNames =
+            top.artistsNames ||
+            top.artists?.map((a: any) => a.name).join(', ') ||
+            'Unknown Artist';
+
+          formattedResult.push({
+            id: top.encodeId || 'top-id',
+            title: top.title || 'Unknown Title',
+            artist: artistNames,
+            image: top.thumbnail,
+            type: 'song',
+          });
+        }
+      }
+
+      if (json?.data?.songs?.length) {
+        const songs = json.data.songs.map((song: any) => ({
+          id: song.encodeId || `song-${Math.random()}`,
+          title: song.title,
+          artist:
+            song.artistsNames || song.artists?.map((a: any) => a.name).join(', '),
+          image: song.thumbnail,
+          type: 'song',
+        }));
+
+        formattedResult = formattedResult.concat(songs);
+      }
+
+      const uniqueResults = formattedResult.filter(
+        (item, index, self) => index === self.findIndex((t) => t.id === item.id)
+      );
+
+      setResults(uniqueResults);
+    } catch (err) {
+      console.error('Search error:', err);
+      setResults([]);
+    }
+  };
+
+  const renderItem = ({ item }: any) => (
+    <TouchableOpacity
+      style={styles.resultRow}
+      onPress={() =>
+        item.type === 'artist'
+          ? navigation.navigate('ArtistScreen', { artistId: item.id })
+          : navigation.navigate('SongDetailScreen', { songId: item.id })
+      }
+    >
+      <Image source={{ uri: item.image }} style={styles.resultImage} />
+      <View style={styles.resultText}>
+        <Text style={styles.resultTitle}>{item.title}</Text>
+        {item.type === 'artist' ? (
+          <Text style={styles.resultSubtitle}>Artist</Text>
+        ) : (
+          <Text style={styles.resultSubtitle}>
+            {item.artist || 'Unknown Artist'}
+          </Text>
+        )}
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
-      <TextInput
-        placeholder="Search"
-        style={styles.searchInput}
-        placeholderTextColor="#999"
-      />
-
-      
+      <View style={styles.searchRow}>
+        <TextInput
+          placeholder="Search"
+          style={styles.searchInput}
+          placeholderTextColor="#999"
+          value={query}
+          onChangeText={(text) => setQuery(text)}
+          returnKeyType="search"
+        />
+      </View>
 
       <Text style={styles.topResult}>Top Result</Text>
 
@@ -85,25 +158,8 @@ const SearchScreen = ({ navigation }: any) => {
       <FlatList
         data={results}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          // <TouchableOpacity
-          //   style={styles.resultRow}
-          //   onPress={() => navigation.navigate('SongDetailScreen')}
-          // >
-          //   <Image source={{ uri: item.image }} style={styles.resultImage} />
-          //   <View style={styles.resultText}>
-          //     <Text style={styles.resultTitle}>{item.title}</Text>
-          //     <Text style={styles.resultSubtitle}>{item.subtitle}</Text>
-          //   </View>
-          // </TouchableOpacity>
-          <SongItemComponent
-            imageUrl={item.image}
-            songName={item.title}
-            artistName={item.subtitle}
-          />
-        )}
+        renderItem={renderItem}
       />
-
     </View>
   );
 };
@@ -117,13 +173,17 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingHorizontal: 24,
   },
+  searchRow: {
+    flexDirection: 'row',
+    marginBottom: 20,
+  },
   searchInput: {
+    flex: 1,
     backgroundColor: '#F0F0F0',
     borderRadius: 14,
     paddingHorizontal: 18,
     paddingVertical: 14,
     fontSize: 18,
-    marginBottom: 24,
   },
   topResult: {
     fontSize: 22,
@@ -152,7 +212,26 @@ const styles = StyleSheet.create({
     color: 'white',
     fontWeight: 'bold',
   },
+  resultRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 22,
+  },
+  resultImage: {
+    width: 64,
+    height: 64,
+    borderRadius: 10,
+    marginRight: 18,
+  },
   resultText: {
     flex: 1,
+  },
+  resultTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+  },
+  resultSubtitle: {
+    fontSize: 16,
+    color: 'gray',
   },
 });
