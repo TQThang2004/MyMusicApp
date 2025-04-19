@@ -7,6 +7,7 @@ import {
   TextInput,
   FlatList,
   ScrollView,
+  TouchableOpacity,
 } from 'react-native';
 
 const trendingSongs = [
@@ -58,7 +59,7 @@ const popularSongs = [
   },
 ];
 
-const PlayListScreen = () => {
+const PlayListScreen = ({navigation}:any) => {
   const renderHeader = () => (
     <View>
       {/* Header */}
@@ -72,11 +73,14 @@ const PlayListScreen = () => {
       <Text style={styles.sectionTitle}>Trending Song</Text>
       <ScrollView horizontal showsHorizontalScrollIndicator={false}>
         {trendingSongs.map(song => (
-          <View key={song.id} style={styles.card}>
+          <TouchableOpacity onPress={() => navigation.navigate('SongDetails', { song })} key={song.id}>
+            <View key={song.id} style={styles.card}>
             <Image source={song.image} style={styles.cardImage} />
             <Text style={styles.cardTitle}>{song.title}</Text>
             <Text style={styles.cardSubtitle}>{song.artist}</Text>
           </View>
+          </TouchableOpacity>
+          
         ))}
       </ScrollView>
 

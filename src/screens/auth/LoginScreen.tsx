@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   View,
@@ -13,6 +13,10 @@ import { ButtonComponent, InputComponent, RowComponent, TextComponent } from '..
 import Icon from 'react-native-vector-icons/FontAwesome';
 import Icon1 from 'react-native-vector-icons/Feather';
 import { appColor } from '../../constants/appColor';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
+import auth from '@react-native-firebase/auth';
+
+
 
 const Login = ({ navigation, setIsLoggedIn }: any ) => {
   const [email, setEmail] = useState('');
@@ -20,6 +24,32 @@ const Login = ({ navigation, setIsLoggedIn }: any ) => {
 
   const handleLogin = () => {
     setIsLoggedIn(true)
+  }
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '398598335148-ugdiuiai2bh7igc16t8619nvfeo5l4qv.apps.googleusercontent.com',
+    });
+  }, []);
+
+  async function onGoogleButtonPress() {
+    // Check if your device supports Google Play
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    // Get the users ID token
+    const signInResult = await GoogleSignin.signIn();
+  
+    // Try the new style of google-sign in result, from v13+ of that module
+    let idToken = signInResult.data?.idToken;
+  
+    if (!idToken) {
+      throw new Error('No ID token found');
+    }
+  
+    // Create a Google credential with the token
+    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+  
+    // Sign-in the user with the credential
+    return auth().signInWithCredential(googleCredential);
   }
 
   return (
@@ -66,6 +96,7 @@ const Login = ({ navigation, setIsLoggedIn }: any ) => {
           color="white"
           textStyles={{ color: appColor.textBlack }}
           iconFlex="left"
+          onPress={onGoogleButtonPress}
           icon={<Icon name="google" size={20} />}
         />
 

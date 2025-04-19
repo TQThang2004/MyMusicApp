@@ -5,7 +5,7 @@ import ContainerComponent from './ContainerComponent';
 import ModalComponent from './ModalComponent';
 import RowComponent from './RowComponent';
 import SpaceComponent from './SpaceComponent';
-
+import SongItemComponent from './SongItemComponent'; 
 export {
     TextComponent,
     ButtonComponent,
@@ -14,4 +14,5 @@ export {
     ContainerComponent,
     RowComponent,
     SpaceComponent,
+    SongItemComponent
 }
