@@ -2,16 +2,18 @@ import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import React, { useRef } from 'react';
 import Swiper from 'react-native-swiper';
 import Icon from 'react-native-vector-icons/Feather';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Onboarding = ({ navigation }: { navigation: any }) => {
     const swiperRef = useRef<Swiper>(null);
     const [index, setIndex] = React.useState(0);
 
-    const handleNextSlide = () => {
+    const handleNextSlide = async () => {
         if (swiperRef.current && index < 2) {
             swiperRef.current.scrollBy(1); // Chuyển sang slide tiếp theo
         } else {
-            navigation.navigate('LoginScreen')
+            await AsyncStorage.setItem('hasSeenOnboarding', 'true');
+            navigation.replace('LoginScreen');
         }
     };
 

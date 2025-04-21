@@ -1,4 +1,4 @@
-import React, { useRef, useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useRef, useState, useCallback, useEffect, useMemo, useContext } from 'react';
 import {
   View,
   Text,
@@ -15,11 +15,15 @@ import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../../config/firebaseConfig';
 import Top3Chart from '../../components/Top3Chart';
 import ZingChartScreen from '../zingChart/zingChart';
+import { ButtonComponent } from '../../components';
+import { AuthContext } from '../../context/AuthContext';
 
 
 const HomeScreen = ({ navigation, setIsBottomSheetOpen }:any) => {
 
-  const IP = '192.168.2.7';
+  const { user, logout } = useContext(AuthContext);
+
+  const IP = '192.168.1.6';
   const PORT = '5000';
   
   const [home, setHomes] = useState([]);
@@ -158,6 +162,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }:any) => {
       <View style={homeStyles.header}>
         <Text style={homeStyles.welcome}>Hey You 👋</Text>
         <Text style={homeStyles.subtitle}>What you want to hear today?</Text>
+        <ButtonComponent text='logout' type='primary' onPress={logout}/>
         <TextInput
           style={homeStyles.searchInput}
           placeholder="Search for songs, artists..."
