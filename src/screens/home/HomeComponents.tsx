@@ -41,7 +41,7 @@ const HomeComponents = (props: any) => (
             >
               <View style={homeStyles.card}>
                 <Image
-                  source={{ uri: playlist.thumbnail }}
+                  source={{ uri: playlist.thumbnailM }}
                   style={homeStyles.cardImage}
                 />
                 <Text style={homeStyles.cardTitle} numberOfLines={1}>
@@ -59,7 +59,12 @@ const HomeComponents = (props: any) => (
         <>
           <View style={homeStyles.flex}>
             <Text style={homeStyles.sectionTitle}>Chill</Text>
-            <TouchableOpacity onPress={() => console.log('See all pressed')}>
+            <TouchableOpacity onPress={() => 
+              {
+                props.navigation.navigate('Playlist', { chillPlaylists: props.chillPlaylists }) 
+                console.log("Chill Playlists: -------",props.chillPlaylists)
+              }
+              }>
               <Text style={homeStyles.textSeeAll}>See all</Text>
             </TouchableOpacity>
           </View>
@@ -67,12 +72,17 @@ const HomeComponents = (props: any) => (
             {props.chillPlaylists.map((playlist:any) => (
                 <TouchableOpacity
                     key={playlist.encodeId}
-                    onPress={() => console.log("Playlist EncodeId: -------",playlist.encodeId)}
-                
+                    onPress={() => 
+                      {
+                        console.log("Playlist EncodeId sdasd: -------",playlist.encodeId)
+                        props.navigation.navigate('OnePlaylist', { playlist })
+                        // props.handlePlayPlaylist(playlist.encodeId, 0)
+                      }               
+                    }  
                 >
                     <View key={playlist.encodeId} style={homeStyles.card}>
                         <Image
-                        source={{ uri: playlist.thumbnail}} 
+                        source={{ uri: playlist.thumbnailM}} 
                         style={homeStyles.cardImage}
                         />
                         <Text style={homeStyles.cardTitle} numberOfLines={1}>
@@ -84,7 +94,39 @@ const HomeComponents = (props: any) => (
           </ScrollView>
         </>
       )}
-
+    {/* Artists - Only show if data exists */}
+    {props.artists?.length > 0 && (
+        <>
+          <View style={homeStyles.flex}>
+            <Text style={homeStyles.sectionTitle}>Artists</Text>
+            <TouchableOpacity onPress={() => props.navigation.navigate('FavoriteArtist')}>
+              <Text style={homeStyles.textSeeAll}>See all</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
+            {props.artists.map((artist:any) => (
+              <TouchableOpacity 
+                key={artist.id} 
+                style={homeStyles.artistCard}
+                onPress={() => props.navigation.navigate('ArtistScreen', { artist })}
+              >
+                <Image 
+                  source={{ uri: artist.thumbnail }} 
+                  style={homeStyles.artistImage} 
+                />
+                <Text style={homeStyles.cardTitle}>{artist.name}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </>
+      )}
+  
+    <View style={homeStyles.flex}>
+      <Text style={homeStyles.sectionTitle}>#zingchart</Text>
+      {/* <TouchableOpacity onPress={() => navigation.navigate('FavoriteArtist')}>
+        <Text style={homeStyles.textSeeAll}>See all</Text>
+      </TouchableOpacity> */}
+    </View>
     {/* Zing Chart */}
     {props.zingChart?.length > 0 && (
       <View>

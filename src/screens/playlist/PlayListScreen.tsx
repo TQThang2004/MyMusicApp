@@ -2,157 +2,152 @@ import React from 'react';
 import {
   View,
   Text,
-  Image,
   StyleSheet,
-  TextInput,
   FlatList,
-  ScrollView,
+  Image,
   TouchableOpacity,
 } from 'react-native';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const trendingSongs = [
-  { id: '1', title: 'Hold Me Closer', artist: 'Britney Spears', image: require('../../assets/images/logo.png') },
-  { id: '2', title: 'Under The Influence', artist: 'Chris Brown', image: require('../../assets/images/logo.png') },
-  { id: '3', title: 'Under The Influence', artist: 'Chris Brown', image: require('../../assets/images/logo.png') },
-  { id: '4', title: 'Under The Influence', artist: 'Chris Brown', image: require('../../assets/images/logo.png') }
-];
+const PlaylistScreen = ({ route }: any) => {
 
-const topPlaylists = [
-  { id: '1', title: 'Bollywood Romance', image: require('../../assets/images/logo.png') },
-  { id: '2', title: 'New Music Daily', image: require('../../assets/images/logo.png') },
-  { id: '3', title: 'New Music Daily', image: require('../../assets/images/logo.png') },
-  { id: '4', title: 'New Music Daily', image: require('../../assets/images/logo.png') }
-];
-
-const favoriteArtists = [
-  { id: '1', name: 'Armaan Malik', image: require('../../assets/images/logo.png') },
-  { id: '2', name: 'Justin Bieber', image: require('../../assets/images/logo.png') },
-  { id: '3', name: 'Katy Perry', image: require('../../assets/images/logo.png') },
-  { id: '4', name: 'Katy Perry', image: require('../../assets/images/logo.png') },
-  { id: '5', name: 'Katy Perry', image: require('../../assets/images/logo.png') }
-];
-
-const popularSongs = [
-  {
-    id: '1',
-    title: 'Headlights (feat. Kiddo)',
-    artist: 'Alok & Alan Walker',
-    image: require('../../assets/images/logo.png'),
-  },
-  {
-    id: '2',
-    title: 'I am Good (Blue)',
-    artist: 'David Guetta',
-    image: require('../../assets/images/logo.png'),
-  },
-  {
-    id: '3',
-    title: 'Besharam Rang',
-    artist: 'Dhvani Bhanushali',
-    image: require('../../assets/images/logo.png'),
-  },
-  {
-    id: '4',
-    title: 'Jhoome Jo Pathaan',
-    artist: 'Vishal & Shekhar',
-    image: require('../../assets/images/logo.png'),
-  },
-];
-
-const PlayListScreen = ({navigation}:any) => {
-  const renderHeader = () => (
-    <View>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.welcome}>Playlist 👋</Text>
-        <Text style={styles.subtitle}>What you want to hear today?</Text>
-        <TextInput style={styles.searchInput} placeholder="Search" />
-      </View>
-
-      {/* Trending Songs */}
-      <Text style={styles.sectionTitle}>Trending Song</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {trendingSongs.map(song => (
-          <TouchableOpacity onPress={() => navigation.navigate('SongDetails', { song })} key={song.id}>
-            <View key={song.id} style={styles.card}>
-            <Image source={song.image} style={styles.cardImage} />
-            <Text style={styles.cardTitle}>{song.title}</Text>
-            <Text style={styles.cardSubtitle}>{song.artist}</Text>
-          </View>
-          </TouchableOpacity>
-          
-        ))}
-      </ScrollView>
-
-      {/* Top Playlists */}
-      <Text style={styles.sectionTitle}>Top Playlists</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {topPlaylists.map(playlist => (
-          <View key={playlist.id} style={styles.card}>
-            <Image source={playlist.image} style={styles.cardImage} />
-            <Text style={styles.cardTitle}>{playlist.title}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Favourite Artists */}
-      <Text style={styles.sectionTitle}>Favourite Artists</Text>
-      <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-        {favoriteArtists.map(artist => (
-          <View key={artist.id} style={styles.artistCard}>
-            <Image source={artist.image} style={styles.artistImage} />
-            <Text style={styles.cardTitle}>{artist.name}</Text>
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Popular Songs */}
-      <Text style={styles.sectionTitle}>Popular Songs</Text>
-    </View>
-  );
+  const { chillPlaylists } = route.params;
+  console.log('chillPlaylists', chillPlaylists);
 
   return (
-    <FlatList
-      data={popularSongs}
-      keyExtractor={item => item.id}
-      ListHeaderComponent={renderHeader}
-      renderItem={({ item }) => (
-        <View style={styles.songRow}>
-          <Text style={styles.songTitle}>{item.title}</Text>
-          <Text style={styles.songArtist}>{item.artist}</Text>
-        </View>
-      )}
-      contentContainerStyle={styles.container}
-      showsVerticalScrollIndicator={false}
-    />
+    <View style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Playlists</Text>
+        <Ionicons name="search" size={22} color="black" />
+      </View>
+
+      {/* Playlist list */}
+      <FlatList
+        data={chillPlaylists}
+        keyExtractor={(item) => item.encodeId}
+        renderItem={({ item }) => (
+          <TouchableOpacity 
+          onPress={() => console.log('Playlist pressed', item.encodeId)}>
+                <View style={styles.itemRow}>
+                <Image source={{ uri: item.thumbnailM }} style={styles.image} />
+                <View style={styles.textContainer}>
+                  <Text style={styles.name}>{item.title}</Text>
+                  <Text style={styles.sub}>{item.artistsNames}</Text>
+                </View>
+                <Ionicons name="ellipsis-vertical" size={18} color="gray" />
+              </View>
+          </TouchableOpacity>
+        )}
+      />   
+    </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: { padding: 20, backgroundColor: '#fff' },
-  header: { marginBottom: 20 },
-  welcome: { fontSize: 24, fontWeight: 'bold', color: 'black' },
-  subtitle: { fontSize: 16, color: 'gray', marginBottom: 10 },
-  searchInput: {
-    backgroundColor: '#f2f2f2',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    height: 40
-  },
-  sectionTitle: { fontSize: 18, fontWeight: 'bold', marginVertical: 10 },
-  card: { marginRight: 15, width: 150 },
-  cardImage: { width: 150, height: 150, borderRadius: 10 },
-  cardTitle: { fontWeight: 'bold', marginTop: 5, color: 'black' },
-  cardSubtitle: { color: 'gray' },
-  artistCard: { marginRight: 15, alignItems: 'center' },
-  artistImage: { width: 80, height: 80, borderRadius: 40 },
-  songRow: {
-    paddingVertical: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee'
-  },
-  songTitle: { fontWeight: 'bold', fontSize: 16, color: 'black' },
-  songArtist: { color: 'gray' }
-});
+export default PlaylistScreen;
 
-export default PlayListScreen;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: '#fff',
+    paddingTop: 60,
+    paddingHorizontal: 20,
+  },
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
+  title: {
+    fontSize: 26,
+    fontWeight: 'bold',
+  },
+  itemRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 14,
+    borderBottomColor: '#eee',
+    borderBottomWidth: 1,
+  },
+  image: {
+    width: 70,
+    height: 70,
+    borderRadius: 10,
+    marginRight: 16,
+  },
+  textContainer: {
+    flex: 1,
+  },
+  name: {
+    fontSize: 18,
+    fontWeight: '600',
+  },
+  sub: {
+    color: 'gray',
+    fontSize: 14,
+    marginTop: 2,
+  },
+  addButton: {
+    position: 'absolute',
+    right: 24,
+    bottom: 36,
+    backgroundColor: '#2196F3',
+    width: 72,
+    height: 72,
+    borderRadius: 16,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+  },
+  modalContainer: {
+    backgroundColor: 'white',
+    padding: 30,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 25,
+    fontSize: 16,
+  },
+  modalButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  modalButton: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginHorizontal: 6,
+  },
+  cancelButton: {
+    backgroundColor: '#eee',
+  },
+  createButton: {
+    backgroundColor: '#2196F3',
+  },
+  cancelText: {
+    fontWeight: 'bold',
+    color: '#555',
+  },
+  createText: {
+    fontWeight: 'bold',
+    color: '#fff',
+  },
+});

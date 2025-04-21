@@ -40,7 +40,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
       </View>
 
       <Image
-        source={{ uri: song.image || song.thumbnail || song.artwork }}
+        source={{ uri: song.image || song.thumbnailM || song.artwork }}
         style={styles.albumArt}
       />
 

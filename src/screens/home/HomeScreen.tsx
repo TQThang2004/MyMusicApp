@@ -19,6 +19,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
   useEffect(() => {
     const loadArtists = async () => {
       const result = await HomeService.fetchArtists();
+      console.log('artists HomeScreen', result);
       setArtists(result);
     };
     loadArtists();
@@ -56,16 +57,51 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
     const songData = await HomeService.fetchSongDetails(item.encodeId);
     if (!songData) return;
 
+    console.log('songData', songData);
+
     await TrackPlayer.reset();
     await TrackPlayer.add({
       id: item.id,
       url: songData['128'] || songData['320'] || songData['256'],
       title: item.title,
       artist: item.artist || 'Unknown',
-      artwork: item.thumbnail,
+      artwork: item.thumbnailM,
     });
     await TrackPlayer.play();
+    console.log('Playing song:', item.title);
     navigation.navigate('Song', { song: item });
+  };
+
+
+  const handlePlayPlaylist = async (playlist: any, startIndex: number = 0) => {
+    try {
+      // Reset player
+      await TrackPlayer.reset();
+  
+      // Thêm tất cả bài hát trong playlist vào queue
+      const tracks = await HomeService.fetchPlaylist(playlist);
+
+      console.log('fetch tracks ', tracks.song.items);
+
+      navigation.navigate('Playlist', { playlist });
+
+      return;
+  
+      // await TrackPlayer.add(tracks);
+      
+      // Phát bài đầu tiên
+      await TrackPlayer.skip(startIndex);
+      await TrackPlayer.play();
+      
+      // Navigate với cả playlist
+      navigation.navigate('Song', { 
+        playlist: tracks,
+        currentIndex: startIndex 
+      });
+  
+    } catch (error) {
+      console.error('Error playing playlist:', error);
+    }
   };
 
   // Bottom sheet handling
@@ -87,6 +123,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
             zingChart={zingChart}
             navigation={navigation}
             handlePlay={handlePlay}
+            handlePlayPlaylist={handlePlayPlaylist}
             handleOpenBottomSheet={handleOpenBottomSheet}
           />
         }
