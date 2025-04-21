@@ -7,8 +7,18 @@ import {
   TextInput,
   FlatList,
   ScrollView,
+  Button,
 } from 'react-native';
+import auth from '@react-native-firebase/auth';
 
+const handleLogout = async () => {
+  try {
+    await auth().signOut();
+    console.log('User signed out!');
+  } catch (error) {
+    console.error('Error signing out:', error);
+  }
+};
 
 
 const ProfileScreen = () => {
@@ -19,6 +29,8 @@ const ProfileScreen = () => {
       <View style={styles.header}>
         <Text style={styles.welcome}>Profile 👋</Text>
         <Text style={styles.subtitle}>What you want to hear today?</Text>
+
+        <Button title="Logout" onPress={handleLogout} />
         <TextInput style={styles.searchInput} placeholder="Search" />
       </View>
 

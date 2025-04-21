@@ -88,10 +88,16 @@ const Login = ({ navigation }: any) => {
   }
 
   async function onGoogleButtonPress() {
+
+    console.log('Google button pressed');
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
     // Get the users ID token
+    console.log('GoogleSignin.signIn() called');
     const signInResult = await GoogleSignin.signIn();
+    console.log('signInResult', signInResult);
     let idToken = signInResult.data?.idToken;
+
+    console.log('idToken', idToken);
 
     if (!idToken) {
       throw new Error('No ID token found');

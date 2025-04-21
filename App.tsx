@@ -7,19 +7,27 @@ import MainNavigator from './src/navigators/MainNavigator';
 import TrackPlayer from 'react-native-track-player';
 import auth from '@react-native-firebase/auth';
 import AuthNavigator from './src/navigators/AuthNavigator';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { WelcomeScreen } from './src/screens';
-import { FirebaseAuthTypes } from '@react-native-firebase/auth';
+
 import { AuthContext, AuthProvider } from './src/context/AuthContext';
 
 const AppContent = () => {
-  const { user } = useContext(AuthContext);
+  const { user } = useContext(AuthContext); 
   const [isShowWelcome, setIsShowWelcome] = useState(true);
 
   useEffect(() => {
     const timeout = setTimeout(() => {
       setIsShowWelcome(false);
     }, 2000);
+    console.log("isShowWelcome", auth().currentUser);
     return () => clearTimeout(timeout);
+  }, []);
+
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '398598335148-ugdiuiai2bh7igc16t8619nvfeo5l4qv.apps.googleusercontent.com',
+    });
   }, []);
 
   useEffect(() => {
