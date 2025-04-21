@@ -83,6 +83,7 @@ const results = [
 ];
 
 const OnePlaylistScreen = () => {
+
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const headerTranslate = scrollY.interpolate({
@@ -237,3 +238,4 @@ const styles = StyleSheet.create({
 });
 
 export default OnePlaylistScreen;
+

@@ -1,133 +1,116 @@
-import React, { useRef, useState, useCallback, useEffect, useMemo, useContext } from 'react';
-import {
-  View,
-  Text,
-  Image,
-  TextInput,
-  FlatList,
-  ScrollView,
-  TouchableOpacity,
-} from 'react-native';
-import homeStyles from './HomeStyles';
-import SongBottomSheet, { SongBottomSheetRef } from '../../components/SongBottomSheet';
+import React, { useRef, useState, useCallback, useEffect } from 'react';
+import { FlatList, Image, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import TrackPlayer from 'react-native-track-player';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../config/firebaseConfig';
-import Top3Chart from '../../components/Top3Chart';
-import ZingChartScreen from '../zingChart/zingChart';
+import HomeComponents from './HomeComponents';
+import SongBottomSheet, { SongBottomSheetRef } from '../../components/SongBottomSheet';
+import { HomeService } from './homeServices';
+import homeStyles from './HomeStyles';
 import { ButtonComponent } from '../../components';
-import { AuthContext } from '../../context/AuthContext';
+import ZingChartScreen from '../zingChart/zingChart';
 
-
-const HomeScreen = ({ navigation, setIsBottomSheetOpen }:any) => {
-
-  const { user, logout } = useContext(AuthContext);
-
-  const IP = '192.168.1.6';
-  const PORT = '5000';
-  
-  const [home, setHomes] = useState([]);
-
+const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
   const [newReleaseSongs, setNewReleaseSongs] = useState<any[]>([]);
-  const [popularSongs, setPopularSongs] = useState<any[]>([]); 
-  const [chillPlaylists, setChillPlaylists] = useState<any[]>([]); 
-  const [zingChart, setZingChart] = useState<any[]>([]); 
+  const [popularSongs, setPopularSongs] = useState<any[]>([]);
+  const [chillPlaylists, setChillPlaylists] = useState<any[]>([]);
+  const [zingChart, setZingChart] = useState<any[]>([]);
   const [artists, setArtists] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchArtists = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'artists'));
-        const fetchedArtists = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setArtists(fetchedArtists);
-      } catch (error) {
-        console.error('Lỗi khi lấy artists từ Firebase:', error);
-      }
-    };
-
-    fetchArtists();
-  }, []);
-
-  // useEffect(() => {
-  //   const fetchPopularSongs = async () => {
-  //     try {
-  //       const snapshot = await getDocs(collection(db, 'songs'));
-  //       const songs = snapshot.docs.map(doc => ({
-  //         id: doc.id,
-  //         ...doc.data()
-  //       }));
-  //       setPopularSongs(songs);
-  //     } catch (error) {
-  //       console.error('Lỗi khi lấy popularSongs từ Firebase:', error);
-  //     }
-  //   };
-
-  //   fetchPopularSongs();
-  // }, []);
-
-
-
-  useEffect(() => {
-    const fetchHomeData = async () => {
-      try {
-        const response = await fetch('http://'+IP+':'+PORT+'/api/home');
-        const json = await response.json();
-        const sections = json.data.items; 
-
-        console.log('Dữ liệu từ API:', sections);
-        console.log('Dữ liệu từ API section 6:', sections[6].items);
-
-        setChillPlaylists(sections[3].items);
-        setNewReleaseSongs(sections[5].items);
-        setZingChart(sections[6].items);
-
-        console.log('Dữ liệu từ API chillPlaylists:', sections[6].items);
-
-  
-        if (json.err === 0 && json.data?.items) {
-          setHomes(json.data.items);
-        } else {
-          console.log('Không có items trong dữ liệu:', json);
-        }
-      } catch (error) {
-        console.error('Lỗi khi fetch API:', error);
-      }
-    };
-  
-    fetchHomeData();
-  }, []);
-  
-
-  const handlePlay = async (item: any) => {
-    console.log("🎵 Playing from Firebase:", item.title);
-  
-    await TrackPlayer.reset();
-  
-    await TrackPlayer.add({
-      id: item.id,
-      url: item.url128, 
-      title: item.title,
-      artist: item.artists || 'Unknown',
-      artwork: item.thumbnail, // từ Firebase
-    });
-  
-    await TrackPlayer.play();
-  
-    navigation.navigate('Song', { song: item });
-  };
-  
-
   const bottomSheetRef = useRef<SongBottomSheetRef>(null);
   const [selectedSong, setSelectedSong] = useState<any>(null);
+
+  // Fetch data effects
+  useEffect(() => {
+    const loadArtists = async () => {
+      const result = await HomeService.fetchArtists();
+      console.log('artists HomeScreen', result);
+      setArtists(result);
+    };
+    loadArtists();
+  }, []);
+
+  useEffect(() => {
+    const loadHomeData = async () => {
+      const sections = await HomeService.fetchHomeData();
+      console.log('sections', sections);
+      sections.forEach((section: any) => {
+      
+        if (!section?.sectionType) return;
+        switch (section.sectionType) {
+          case 'playlist':
+            if (section.title === 'Chill') {
+              setChillPlaylists(section.items);
+            }
+            break;
+          case 'new-release':
+            setNewReleaseSongs(section.items.all);
+            break;
+          case 'RTChart':
+            setZingChart(section.items);
+            break;
+          default:
+            break;
+        }
+      });
+    };
+    loadHomeData();
+  }, []);
+
+  // Player logic
+  const handlePlay = async (item: any) => {
+    const songData = await HomeService.fetchSongDetails(item.encodeId);
+    if (!songData) return;
+
+    console.log('songData', songData);
+
+    await TrackPlayer.reset();
+    await TrackPlayer.add({
+      id: item.id,
+      url: songData['128'] || songData['320'] || songData['256'],
+      title: item.title,
+      artist: item.artist || 'Unknown',
+      artwork: item.thumbnailM,
+    });
+    await TrackPlayer.play();
+    console.log('Playing song:', item.title);
+    navigation.navigate('Song', { song: item });
+  };
+
+
+  const handlePlayPlaylist = async (playlist: any, startIndex: number = 0) => {
+    try {
+      // Reset player
+      await TrackPlayer.reset();
   
+      // Thêm tất cả bài hát trong playlist vào queue
+      const tracks = await HomeService.fetchPlaylist(playlist);
+
+      console.log('fetch tracks ', tracks.song.items);
+
+      navigation.navigate('Playlist', { playlist });
+
+      return;
+  
+      // await TrackPlayer.add(tracks);
+      
+      // Phát bài đầu tiên
+      await TrackPlayer.skip(startIndex);
+      await TrackPlayer.play();
+      
+      // Navigate với cả playlist
+      navigation.navigate('Song', { 
+        playlist: tracks,
+        currentIndex: startIndex 
+      });
+  
+    } catch (error) {
+      console.error('Error playing playlist:', error);
+    }
+  };
+
+  // Bottom sheet handling
   const handleOpenBottomSheet = useCallback((song: any) => {
     setSelectedSong(song);
     bottomSheetRef.current?.expand();
   }, [setIsBottomSheetOpen]);
-
 
   const SongItem = React.memo(({ item }: any) => {
     const isRemoteImage = typeof item.image === 'string' || item.thumbnail;
@@ -162,7 +145,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }:any) => {
       <View style={homeStyles.header}>
         <Text style={homeStyles.welcome}>Hey You 👋</Text>
         <Text style={homeStyles.subtitle}>What you want to hear today?</Text>
-        <ButtonComponent text='logout' type='primary' onPress={logout}/>
+        <ButtonComponent text='logout' type='primary'/>
         <TextInput
           style={homeStyles.searchInput}
           placeholder="Search for songs, artists..."
@@ -271,15 +254,25 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }:any) => {
       <FlatList
         data={popularSongs}
         keyExtractor={item => item.id}
-        ListHeaderComponent={renderHeader}
+        ListHeaderComponent={
+          <HomeComponents
+            newReleaseSongs={newReleaseSongs}
+            chillPlaylists={chillPlaylists}
+            artists={artists}
+            zingChart={zingChart}
+            navigation={navigation}
+            handlePlay={handlePlay}
+            handlePlayPlaylist={handlePlayPlaylist}
+            handleOpenBottomSheet={handleOpenBottomSheet}
+          />
+        }
         renderItem={({ item }) => (
-          <SongItem 
-            item={item} 
-           
+          <HomeComponents.SongItem
+            item={item}
+            handlePlay={handlePlay}
+            handleOpenBottomSheet={handleOpenBottomSheet}
           />
         )}
-        contentContainerStyle={homeStyles.container}
-        showsVerticalScrollIndicator={false}
       />
 
       <SongBottomSheet

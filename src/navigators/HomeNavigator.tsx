@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen, SearchScreen, PlaylistScreen, ProfileScreen } from '../screens';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AddSongScreen from '../screens/playlist/AddSongScreen';
-import MyPlaylistScreen from '../screens/playlist/MyPlaylistScreen';
+import MyPlaylistScreen from '../screens/playlist/OnePlaylistScreen';
 
 const Tab = createBottomTabNavigator();
 

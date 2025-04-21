@@ -18,7 +18,7 @@ const ZingChartScreen = ({ songs }:any) => {
     }}
         >
         <ScrollView style={styles.container}>
-            <Text style={styles.heading}>#zingchart</Text>
+            {/* <Text style={styles.heading}>#zingchart</Text> */}
             <Top3Chart songs={songs} />
         </ScrollView>
         </LinearGradient>

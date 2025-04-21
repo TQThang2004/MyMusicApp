@@ -74,8 +74,10 @@ const Login = ({ navigation }: any) => {
         values,
         'POST'
       );
+
       const token = res.data?.token;
       login(token);
+
     } catch (error) {
       console.log('error', error);
       const err = error as any;
@@ -97,7 +99,7 @@ const Login = ({ navigation }: any) => {
 
     const googleCredential = auth.GoogleAuthProvider.credential(idToken);
 
-    return auth().signOut();
+    return auth().signInWithCredential(googleCredential);
   }
 
   return (

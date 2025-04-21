@@ -29,6 +29,7 @@ const homeStyles = StyleSheet.create({
   sectionTitle: {
     fontSize: 18,
     fontWeight: 'bold',
+    color: 'black',
     marginVertical: 12,
     paddingHorizontal: 16,
   },
