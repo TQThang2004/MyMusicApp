@@ -68,14 +68,15 @@ const RegisterScreen = ({ navigation }: { navigation: any }) => {
     
         setLoading(true);
         try {
-            const res = await authenticationAPI.HandleAuthentication(
-                '/register', 
-                values, 
-                'POST');
+            // const res = await authenticationAPI.HandleAuthentication(
+            //     '/register', 
+            //     values, 
+            //     'POST');
+            
             // Xử lý khi thành công (ví dụ chuyển trang, hiển thị thông báo, v.v.)
         } catch (error) {
-            console.log(error);
-            setErrorMessage('Registration failed');
+            // console.log(error);
+            // setErrorMessage('Registration failed');
         } finally {
             setLoading(false);
         }

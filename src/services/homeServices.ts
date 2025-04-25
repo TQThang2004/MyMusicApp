@@ -4,6 +4,7 @@ import { db } from '../../config/firebaseConfig';
 
 // const IP = '10.0.2.2';
 const IP = '192.168.2.5';
+
 const PORT = '5000';
 
 export const HomeService = {

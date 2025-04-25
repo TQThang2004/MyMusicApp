@@ -1,10 +1,25 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import FloatingPlayer from '../../components/FloatPlayer';
 import TrackPlayer from 'react-native-track-player';
+import auth from '@react-native-firebase/auth';
+import { AuthContext } from '../../context/AuthContext';
+
 
 export default function ProfileScreen(navigation: any) {
+
+
+const handleLogout = async () => {
+  try {
+    await auth().signOut();
+    console.log('User signed out!');
+  } catch (error) {
+    console.error('Error signing out:', error);
+  }
+};
+
+  const { user, logout } = useContext(AuthContext);
   return (
     <>
     <ScrollView style={styles.container}>
@@ -15,6 +30,7 @@ export default function ProfileScreen(navigation: any) {
           <Icon name="notifications-none" size={24} color="#000" style={styles.icon} />
           <Icon name="search" size={24} color="#000" style={styles.icon} />
         </View>
+
       </View>
 
       <View style={styles.profile}>

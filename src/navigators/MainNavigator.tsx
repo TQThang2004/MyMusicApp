@@ -8,6 +8,7 @@ import { PlaylistScreen, ProfileScreen, SongDetailScreen } from '../screens';
 import OnePlaylistScreen from '../screens/playlist/OnePlaylistScreen';
 import ZingChartHome from '../screens/zingChart/zingChartHome';
 
+
 const Stack = createNativeStackNavigator();
 
 const MainNavigator = () => {

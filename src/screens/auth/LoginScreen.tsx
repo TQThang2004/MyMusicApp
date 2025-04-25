@@ -41,11 +41,11 @@ const Login = ({ navigation }: any) => {
   //   setIsLoggedIn(true)
   // }
 
-  // useEffect(() => {
-  //   GoogleSignin.configure({
-  //     webClientId: '398598335148-ugdiuiai2bh7igc16t8619nvfeo5l4qv.apps.googleusercontent.com',
-  //   });
-  // }, []);
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: '398598335148-ugdiuiai2bh7igc16t8619nvfeo5l4qv.apps.googleusercontent.com',
+    });
+  }, []);
 
   const handleLogin = async () => {
     const { email, password } = values;
@@ -94,21 +94,34 @@ const Login = ({ navigation }: any) => {
 
     console.log('Google button pressed');
     await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
-    // Get the users ID token
-    console.log('GoogleSignin.signIn() called');
+    await GoogleSignin.signOut();
     const signInResult = await GoogleSignin.signIn();
-    console.log('signInResult', signInResult);
-    let idToken = signInResult.data?.idToken;
-
-    console.log('idToken', idToken);
-
-    if (!idToken) {
-      throw new Error('No ID token found');
+    const data = signInResult.data?.user;
+    const values: any = {
+      id: data?.id,
+      email: data?.email,
+      name: data?.name,
+      photo: data?.photo,
     }
+    
+    setLoading(true);
+    try {
+      const res = await authenticationAPI.HandleAuthentication(
+        '/login-google',
+        values,
+        'POST'
+      );
 
-    const googleCredential = auth.GoogleAuthProvider.credential(idToken);
+      const token = res.data?.token;
+      login(token);
 
-    return auth().signInWithCredential(googleCredential);
+    } catch (error) {
+      console.log('error', error);
+      const err = error as any;
+      setErrorMessage(err)
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

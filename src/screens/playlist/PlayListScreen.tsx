@@ -1,19 +1,53 @@
-import React from 'react';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
-  FlatList,
-  Image,
+  Animated,
   TouchableOpacity,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import Icon from 'react-native-vector-icons/Entypo';
+import { AuthContext } from '../../context/AuthContext';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { SongItemComponent } from '../../components';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const PlaylistScreen = ({ route }: any) => {
 
-  const { chillPlaylists } = route.params;
-  console.log('chillPlaylists', chillPlaylists);
+const PlaylistScreen = ({navigation}:any) => {
 
+  const { user } = useContext(AuthContext);
+
+  interface PlaylistItem {
+    id: string;
+    name: string;
+    thumbnail: string;
+  }
+  
+  const [playlists, setPlaylists] = useState<PlaylistItem[]>([]);
+
+  
+  useFocusEffect(
+    useCallback(() => {
+      const fetchPlaylists = async () => {
+        try {
+          console.log('Fetching playlists for user ID:', user.id);
+          const response = await fetch(`http://192.168.2.5:5000/api/main/get-playlist/${user.id}`);
+          console.log('Playlist response:', response);
+          const data = await response.json();
+          console.log('Playlist data:', data);
+          setPlaylists(data.playlist.result);
+          console.log('Playlist data:', playlists);
+        } catch (error) {
+          console.error('Lỗi khi tải playlist:', error);
+        }
+      };
+
+      if (user?.id) {
+        fetchPlaylists();
+      }
+    }, [])
+  );
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -23,24 +57,40 @@ const PlaylistScreen = ({ route }: any) => {
       </View>
 
       {/* Playlist list */}
-      <FlatList
-        data={chillPlaylists}
-        keyExtractor={(item) => item.encodeId}
-        renderItem={({ item }) => (
-          <TouchableOpacity 
-              onPress={() => console.log('Playlist pressed', item.encodeId)}
-              >
-                <View style={styles.itemRow}>
-                <Image source={{ uri: item.thumbnailM }} style={styles.image} />
-                <View style={styles.textContainer}>
-                  <Text style={styles.name}>{item.title}</Text>
-                  <Text style={styles.sub}>{item.artistsNames}</Text>
-                </View>
-                <Ionicons name="ellipsis-vertical" size={18} color="gray" />
-              </View>
-          </TouchableOpacity>
-        )}
-      />   
+      <Animated.ScrollView
+        contentContainerStyle={{ paddingBottom: 100 }}
+        showsVerticalScrollIndicator={false}
+        style={{ paddingHorizontal: 5, paddingVertical: 10 }}
+      >
+        {playlists.map((item) => (
+          <SongItemComponent
+            key={item.id}
+            imageUrl={item.thumbnail}
+            songName={item.name}
+            artistName={user.username}
+            isButton
+            icon={<Icon name="dots-three-horizontal" size={20} color="#555" />}
+            onPress={() => {
+              navigation.navigate('OnePlaylist', {
+                playlistId: item.id,
+                playlistName: item.name,
+                thumbnail: item.thumbnail,
+                creatorName: user.username
+              });
+            }}
+          />
+        ))}
+      </Animated.ScrollView> 
+
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => {
+          console.log('Add button pressed');
+          navigation.navigate('CreatePlaylist');
+        }}
+      >
+        <Ionicons name="add" size={32} color="white" />
+      </TouchableOpacity>
     </View>
   );
 };

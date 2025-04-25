@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   StatusBar,
+  Alert,
 } from 'react-native';
 import { ButtonComponent, RowComponent, SongItemComponent, TextComponent } from '../../components';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -82,6 +83,7 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
 
 
 
+
   const scrollY = useRef(new Animated.Value(0)).current;
 
   const headerTranslate = scrollY.interpolate({
@@ -103,7 +105,6 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
   });
 
   return (
-
     <View style={styles.container}>
       <StatusBar
         translucent
@@ -120,6 +121,7 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
       >
         <Animated.Image
           source={{uri: playlist.thumbnailM}}
+
           style={[
             styles.backgroundImage,
             { transform: [{ scale: imageScale }] },
@@ -133,25 +135,7 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
             },
           ]}
         >
-          {/* <TextComponent text={`${playlist.title}`} title styles={{ textAlign: 'center' }} /> */}
-          {/* <RowComponent justifyContent='space-around' styles={{ height: 50 }}>
-            <ButtonComponent
-              text='Shuffle'
-              type='primary'
-              textStyles={{ color: appColor.textWhite }}
-              styles={{ width: '45%', backgroundColor: '#92c0e8' }}
-              icon={<Icon name="shuffle" size={15} color={appColor.textWhite} />}
-              iconFlex='left'
-            />
-            <ButtonComponent
-              text='Play'
-              type='primary'
-              textStyles={{ color: appColor.textBlack }}
-              styles={{ width: '45%', backgroundColor: '#e3e3e3' }}
-              icon={<Icon name="controller-play" size={20} color={appColor.textBlack} />}
-              iconFlex='left'
-            />
-          </RowComponent> */}
+
         </Animated.View>
       </Animated.View>
 
@@ -180,11 +164,11 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
             icon={<Icon name="dots-three-horizontal" size={20} color="#555" />}
           />
         ))}
+
       </Animated.ScrollView>
       {/* <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => {
-          // TODO: handle thêm bài hát
           console.log('Thêm bài hát được nhấn');
         }}
       >
