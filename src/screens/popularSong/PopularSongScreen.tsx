@@ -3,52 +3,41 @@ import { View, Text, FlatList, Image, TouchableOpacity, SafeAreaView } from 'rea
 import styles from './PopularSongStyle';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import TrackPlayer from 'react-native-track-player';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../../../config/firebaseConfig';
+import { HomeService } from '../../services/homeServices';
 
-const PopularSongScreen = ({ navigation}: any) => {
+const PopularSongScreen = ({ route, navigation}: any) => {
+
+  const { popularSongs } = route.params;
+  console.log('popularSongs', popularSongs);
+  console.log('route.params', popularSongs[0]);
   
-  const [popularSongs, setPopularSongs] = useState<any[]>([]);
 
-  useEffect(() => {
-    const fetchPopularSongs = async () => {
-      try {
-        const snapshot = await getDocs(collection(db, 'songs'));
-        const songs = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setPopularSongs(songs);
-      } catch (error) {
-        console.error('Lỗi khi lấy popularSongs từ Firebase:', error);
-      }
-    };
+   // Player logic
+   const handlePlay = async (item: any) => {
+    const songData = await HomeService.fetchSongDetails(item.encodeId);
+    if (!songData) return;
 
-    fetchPopularSongs();
-  }, []);
+    console.log('songData', songData);
 
-  const handlePlay = async (item: any) => {
-      console.log("🎵 Playing from Firebase:", item.title);
-    
-      await TrackPlayer.reset();
-    
-      await TrackPlayer.add({
-        id: item.id,
-        url: item.url128, // dùng url128 từ Firebase
-        title: item.title,
-        artist: item.artists || 'Unknown',
-        artwork: item.thumbnail, // từ Firebase
-      });
-    
-      await TrackPlayer.play();
-    
-      navigation.navigate('Song', { song: item });
-    };
+    await TrackPlayer.reset();
+    await TrackPlayer.add({
+      id: item.id,
+      url: songData['128'] || songData['320'] || songData['256'],
+      title: item.title,
+      artist: item.artist || 'Unknown',
+      artwork: item.thumbnailM,
+    });
+    await TrackPlayer.play();
+    console.log('Playing song:', item.title);
+    navigation.navigate('Song', { song: item });
+  };
 
   const renderItem = ({ item }: any) => (
-    <TouchableOpacity style={styles.item} onPress={() => handlePlay(item)}>
+    console.log("item",item),
+    <TouchableOpacity style={styles.item} key={item.id} onPress={() => handlePlay(item)}>
+   
       <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
-        <Image source={{ uri: item.image || item.thumbnail }} style={styles.image} />
+        <Image source={{ uri: item.image || item.thumbnailM }} style={styles.image} />
         <View style={{ flex: 1, marginLeft: 10 }}>
           <Text
             style={styles.nameSong}
@@ -62,7 +51,7 @@ const PopularSongScreen = ({ navigation}: any) => {
             numberOfLines={1}
             ellipsizeMode="tail"
           >
-            {item.artists}
+            {item.artistsNames || 'Unknown'}
           </Text>
         </View>
       </View>
@@ -79,7 +68,7 @@ const PopularSongScreen = ({ navigation}: any) => {
         <TouchableOpacity onPress={() => navigation.goBack()}>
           <Ionicons name="arrow-back" size={24} color="black" />
         </TouchableOpacity>
-        <Text style={styles.title}>Popular Songs</Text>
+        <Text style={styles.title}>New Release</Text>
         <View style={{ width: 24 }} />
       </View>
 

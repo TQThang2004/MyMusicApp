@@ -69,13 +69,16 @@ const Login = ({ navigation }: any) => {
 
     setLoading(true);
     try {
+      console.log('values', values);
       const res = await authenticationAPI.HandleAuthentication(
         '/login',
         values,
         'POST'
       );
+      console.log('res', res);
 
       const token = res.data?.token;
+      console.log('token', token);
       login(token);
 
     } catch (error) {

@@ -39,18 +39,13 @@ const buttonComponent = (props: Props) => {
                     styles={[textStyles, {
                         marginLeft: icon ? 12 : 0,
                         marginRight: icon && iconFlex === 'right' ? 12 : 0,
+                        fontSize: 10,
                     }]}
                 />
                 {icon && iconFlex === 'right' && icon}
             </TouchableOpacity>
-        :   <TouchableOpacity
-                onPress={onPress}
-                style={[
-                    styles
-                ]}
-            >
-                <TextComponent text={text} color={type==='link' ? appColor.blue400 : appColor.textWhite} styles={textStyles} />
-        </TouchableOpacity>
+            :
+            <TouchableOpacity></TouchableOpacity>
     )
 }
 

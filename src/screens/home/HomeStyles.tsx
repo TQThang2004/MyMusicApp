@@ -2,11 +2,13 @@ import { StyleSheet } from 'react-native';
 
 const homeStyles = StyleSheet.create({
   container: { paddingBottom: 20, backgroundColor: '#fff' },
-  header: { marginBottom: 20, marginTop: 30, paddingHorizontal: 16 },
+  header: { marginBottom: 20, marginTop: 50, paddingHorizontal: 16 },
   welcome: { fontSize: 24, fontWeight: 'bold', color: 'black' },
   subtitle: { fontSize: 16, color: 'gray', marginBottom: 10 },
   searchInput: {
     backgroundColor: '#f2f2f2',
+    borderWidth: 1,
+    borderColor: '#ddd',
     borderRadius: 10,
     paddingHorizontal: 15,
     height: 40,
@@ -25,6 +27,11 @@ const homeStyles = StyleSheet.create({
     color: '#3eb6fb',
     paddingRight: 16,
     paddingTop: 6,
+  },
+  bottom: {
+    height: 350,
+    width: '100%',
+    backgroundColor: '#fff',
   },
   sectionTitle: {
     fontSize: 18,

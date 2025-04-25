@@ -11,6 +11,7 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import { WelcomeScreen } from './src/screens';
 
 import { AuthContext, AuthProvider } from './src/context/AuthContext';
+import FloatingPlayer from './src/components/FloatPlayer';
 
 const AppContent = () => {
   const { user } = useContext(AuthContext); 
@@ -42,27 +43,37 @@ const AppContent = () => {
   }, []);
 
   return (
-    <SafeAreaProvider>
-      <StatusBar barStyle="dark-content" backgroundColor="white" translucent />
+    <>
+    <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <SafeAreaView style={{ flex: 1 }} edges={[]}>
         {isShowWelcome ? (
           <WelcomeScreen />
         ) : (
           <NavigationContainer>
-            {user ? <MainNavigator /> : <AuthNavigator />}
+            {user ? (
+                <>
+                  <MainNavigator />
+                </>
+              ) : (
+                <AuthNavigator />
+              )}
           </NavigationContainer>
         )}
       </SafeAreaView>
-    </SafeAreaProvider>
+    </>
+      
   );
 };
 
 const App = () => {
   return (
     <AuthProvider>
-      <GestureHandlerRootView style={{ flex: 1 }}>
+      <SafeAreaProvider >
+      <GestureHandlerRootView style={{ height: '100%', backgroundColor: 'transparent' }}>
         <AppContent />
       </GestureHandlerRootView>
+      </SafeAreaProvider>
+      
     </AuthProvider>
   );
 };

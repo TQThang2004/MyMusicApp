@@ -7,33 +7,44 @@ import {
   TextInput,
   ScrollView,
   TouchableOpacity,
+  Pressable,
 } from 'react-native';
 import homeStyles from './HomeStyles';
 import ZingChartScreen from '../../screens/zingChart/zingChart';
 
 const HomeComponents = (props: any) => (
+
   <View>
     {/* Header */}
     <View style={homeStyles.header}>
       <Text style={homeStyles.welcome}>Hey You 👋</Text>
-      <Text style={homeStyles.subtitle}>What you want to hear today?</Text>
-      <TextInput
+      <Text style={homeStyles.subtitle}>What do u  want to hear today?</Text>
+      <Pressable
         style={homeStyles.searchInput}
-        placeholder="Search for songs, artists..."
-        placeholderTextColor="#999"
-      />
+        onPress={() => props.navigation.navigate('Search')}
+      >
+        <Text style={{ color: '#999',paddingTop: 8 }}>Search for songs, artists...</Text>
+    </Pressable>
+      
     </View>
+
 
     {/* New Release */}
     {props.newReleaseSongs?.length > 0 && (
       <>
         <View style={homeStyles.flex}>
           <Text style={homeStyles.sectionTitle}>New Release</Text>
-          <TouchableOpacity onPress={() => console.log('See all pressed')}>
+          <TouchableOpacity onPress={() => 
+              {
+                console.log("Props: -------",props)
+                props.navigation.navigate('PopularSong', { popularSongs: props.newReleaseSongs }) 
+                console.log("PopularSong: -------",props.newReleaseSongs)
+              }
+              }>
             <Text style={homeStyles.textSeeAll}>See all</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
           {props.newReleaseSongs.map((playlist: any) => (
             <TouchableOpacity
               key={playlist.encodeId}
@@ -53,6 +64,8 @@ const HomeComponents = (props: any) => (
         </ScrollView>
       </>
     )}
+
+    
 
     {/* Chill Playlists - Only show if data exists */}
     {props.chillPlaylists?.length > 0 && (
@@ -76,6 +89,7 @@ const HomeComponents = (props: any) => (
                       {
                         console.log("Playlist EncodeId sdasd: -------",playlist.encodeId)
                         props.navigation.navigate('OnePlaylist', { playlist })
+                        console.log("Playlist: -------",playlist)
                         // props.handlePlayPlaylist(playlist.encodeId, 0)
                       }               
                     }  
@@ -96,6 +110,8 @@ const HomeComponents = (props: any) => (
       )}
     {/* Artists - Only show if data exists */}
     {props.artists?.length > 0 && (
+
+        console.log("props: -------",props),
         <>
           <View style={homeStyles.flex}>
             <Text style={homeStyles.sectionTitle}>Artists</Text>
@@ -121,19 +137,69 @@ const HomeComponents = (props: any) => (
         </>
       )}
   
-    <View style={homeStyles.flex}>
-      <Text style={homeStyles.sectionTitle}>#zingchart</Text>
-      {/* <TouchableOpacity onPress={() => navigation.navigate('FavoriteArtist')}>
-        <Text style={homeStyles.textSeeAll}>See all</Text>
-      </TouchableOpacity> */}
-    </View>
+    
     {/* Zing Chart */}
     {props.zingChart?.length > 0 && (
       <View>
-        <ZingChartScreen songs={props.zingChart} />
+       <ZingChartScreen songs={props.zingChart} navigation={props.navigation}/>
+
       </View>
     )}
+
+    {/* Top 100 Playlists */}
+    {props.top100?.length > 0 && (
+      console.log("Top 100 Playlists ssssssssssss: -------",props.top100),
+        <>
+          <View style={homeStyles.flex}>
+            <Text style={homeStyles.sectionTitle}>Top 100</Text>
+            <TouchableOpacity onPress={() => 
+              {
+                props.navigation.navigate('Playlist', { top100: props.top100 }) 
+                console.log("Chill Playlists: -------",props.top100)
+              }
+              }>
+              <Text style={homeStyles.textSeeAll}>See all</Text>
+            </TouchableOpacity>
+          </View>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
+            {props.top100.map((playlist:any) => (
+                <TouchableOpacity
+                    key={playlist.encodeId}
+                    onPress={() => 
+                      {
+                        console.log("Playlist EncodeId sdasd: -------",playlist.encodeId)
+                        props.navigation.navigate('OnePlaylist', { playlist })
+                        console.log("Playlist: -------",playlist)
+                        // props.handlePlayPlaylist(playlist.encodeId, 0)
+                      }               
+                    }  
+                >
+                    <View key={playlist.encodeId} style={homeStyles.card}>
+                        <Image
+                        source={{ uri: playlist.thumbnailM}} 
+                        style={homeStyles.cardImage}
+                        />
+                        <Text style={homeStyles.cardTitle} numberOfLines={1}>
+                        {playlist.sortDescription}
+                        </Text>
+                </View>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </>
+      )
+      }
+
+
+      <View style={homeStyles.bottom}>
+        <Text style={homeStyles.sectionTitle}></Text>
+      </View>
+        
   </View>
+
+  
+
+  
 );
 
 export default HomeComponents;

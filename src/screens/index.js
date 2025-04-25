@@ -5,6 +5,7 @@ import PlaylistScreen from './playlist/PlayListScreen';
 import LoginScreen from './auth/LoginScreen';
 import WelcomeScreen from './WelcomScreen';
 import SongDetailScreen from './song/SongDetailScreen';
+import ZingChartHome from './zingChart/zingChartHome';
 
 export {
     HomeScreen,
@@ -14,5 +15,6 @@ export {
     WelcomeScreen,
     SongDetailScreen,
     SearchScreen,
+    ZingChartHome
 
 }

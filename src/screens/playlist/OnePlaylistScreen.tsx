@@ -1,88 +1,86 @@
-import React, { useRef } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   View,
-  Text,
-  Image,
   StyleSheet,
   Dimensions,
-  TouchableOpacity,
-  ScrollView,
   StatusBar,
 } from 'react-native';
 import { ButtonComponent, RowComponent, SongItemComponent, TextComponent } from '../../components';
 import Icon from 'react-native-vector-icons/Entypo';
 import { appColor } from '../../constants/appColor';
+import { PlaylistService } from '../../services/playlistServices';
+import { HomeService } from '../../services/homeServices';
+import TrackPlayer from 'react-native-track-player';
+import FloatingPlayer from '../../components/FloatPlayer';
 
 const { height: screenHeight } = Dimensions.get('window');
 const HEADER_MAX_HEIGHT = screenHeight * 0.5;
 const HEADER_MIN_HEIGHT = screenHeight * 0.3;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
-const results = [
-  {
-    id: '1',
-    title: 'Pehla Pyaar',
-    subtitle: 'Kabir Singh',
-    image: 'https://i.scdn.co/image/ab67616d0000b273c5545f737b16ad5ee767b62a',
-  },
-  {
-    id: '2',
-    title: 'Jab Tak',
-    subtitle: 'M.S Dhoni: The Untold Story',
-    image: 'https://i.ytimg.com/vi/K-Ts-NFR62o/maxresdefault.jpg',
-  },
-  {
-    id: '3',
-    title: 'I am Good (Blue)',
-    subtitle: 'David Guetta',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9kBGM9omB8Kz0At_gsZg31FWDnYk4ypFUMA&s',
-  },
-  {
-    id: '4',
-    title: 'Bol Do Na Zara',
-    subtitle: 'Azhar',
-    image: 'https://i.ytimg.com/vi/EpEraRui1pc/maxresdefault.jpg',
-  },
-  {
-    id: '5',
-    title: 'Jhoome Jo Pathaan',
-    subtitle: 'Vishal & Shekhar',
-    image: 'https://upload.wikimedia.org/wikipedia/en/8/8b/Jhoome_Jo_Pathaan_song_cover.jpg',
-  },
-  {
-    id: '6',
-    title: 'Pehla Pyaar',
-    subtitle: 'Kabir Singh',
-    image: 'https://i.scdn.co/image/ab67616d0000b273c5545f737b16ad5ee767b62a',
-  },
-  {
-    id: '7',
-    title: 'Jab Tak',
-    subtitle: 'M.S Dhoni: The Untold Story',
-    image: 'https://i.ytimg.com/vi/K-Ts-NFR62o/maxresdefault.jpg',
-  },
-  {
-    id: '8',
-    title: 'I am Good (Blue)',
-    subtitle: 'David Guetta',
-    image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ9kBGM9omB8Kz0At_gsZg31FWDnYk4ypFUMA&s',
-  },
-  {
-    id: '9',
-    title: 'Bol Do Na Zara',
-    subtitle: 'Azhar',
-    image: 'https://i.ytimg.com/vi/EpEraRui1pc/maxresdefault.jpg',
-  },
-  {
-    id: '10',
-    title: 'Jhoome Jo Pathaan',
-    subtitle: 'Vishal & Shekhar',
-    image: 'https://upload.wikimedia.org/wikipedia/en/8/8b/Jhoome_Jo_Pathaan_song_cover.jpg',
-  },
-];
 
-const OnePlaylistScreen = () => {
+const OnePlaylistScreen = ({route, navigation}:any) => {
+
+  const [list, setList] = useState<{ thumbnailM: string;encodeId:string, title: string; artistsNames: string }[]>([]);
+
+  const { playlist } = route.params;
+  console.log('Playlist:', playlist);
+  console.log('encodeId Playlist', playlist.encodeId);
+  
+  useEffect(() => {
+    console.log('Playlist ID:', playlist.encodeId);
+    const fetchPlaylistDetails = async () => { 
+      try {
+        const playlistObj = await PlaylistService.fetchDetailPlaylist(playlist.encodeId);
+        console.log('Playlist details:', playlistObj.data.song.items);
+        setList(playlistObj.data.song.items);
+      } catch (error) {
+        console.error('Error fetching playlist details:', error);
+      }  
+     }
+     fetchPlaylistDetails();
+    },[]);
+
+
+    const handlePlay = async (selectedItem: any, list: { thumbnailM: string; encodeId: string; title: string; artistsNames: string; }[], navigation: any) => {
+
+      const fullList = list;
+    
+      await TrackPlayer.reset();
+    
+      const tracks = await Promise.all(
+        fullList.map(async (item: any) => {
+          const songData = await HomeService.fetchSongDetails(item.encodeId);
+          if (!songData) return null;
+    
+          return {
+            id: item.encodeId,
+            url: songData['128'] || songData['320'] || songData['256'],
+            title: item.title,
+            artist: item.artistsNames || 'Unknown',
+            artwork: item.thumbnailM,
+          };
+        })
+      );
+    
+      const filteredTracks = tracks.filter((track) => track !== null);
+    
+      await TrackPlayer.add(filteredTracks);
+    
+      const index = filteredTracks.findIndex((track: any) => track.id === selectedItem.encodeId);
+    
+      if (index >= 0) {
+        await TrackPlayer.skip(index);
+      }
+    
+      await TrackPlayer.play();
+    
+      console.log('Playing song:', selectedItem.title);
+      navigation.navigate('Song', { song: selectedItem });
+    };
+
+
 
   const scrollY = useRef(new Animated.Value(0)).current;
 
@@ -121,7 +119,7 @@ const OnePlaylistScreen = () => {
         ]}
       >
         <Animated.Image
-          source={require('../../assets/images/playlist.jpg')}
+          source={{uri: playlist.thumbnailM}}
           style={[
             styles.backgroundImage,
             { transform: [{ scale: imageScale }] },
@@ -135,15 +133,14 @@ const OnePlaylistScreen = () => {
             },
           ]}
         >
-          <TextComponent text='Trịnh Quang Thắng' title styles={{ textAlign: 'center' }} />
-          <TextComponent text='54 Songs | 15:45:00 mins' styles={{ textAlign: 'center' }} />
-          <RowComponent justifyContent='space-around'>
+          {/* <TextComponent text={`${playlist.title}`} title styles={{ textAlign: 'center' }} /> */}
+          {/* <RowComponent justifyContent='space-around' styles={{ height: 50 }}>
             <ButtonComponent
               text='Shuffle'
               type='primary'
               textStyles={{ color: appColor.textWhite }}
               styles={{ width: '45%', backgroundColor: '#92c0e8' }}
-              icon={<Icon name="shuffle" size={20} color={appColor.textWhite} />}
+              icon={<Icon name="shuffle" size={15} color={appColor.textWhite} />}
               iconFlex='left'
             />
             <ButtonComponent
@@ -151,10 +148,10 @@ const OnePlaylistScreen = () => {
               type='primary'
               textStyles={{ color: appColor.textBlack }}
               styles={{ width: '45%', backgroundColor: '#e3e3e3' }}
-              icon={<Icon name='play-outline' color='black' size={20} />}
+              icon={<Icon name="controller-play" size={20} color={appColor.textBlack} />}
               iconFlex='left'
             />
-          </RowComponent>
+          </RowComponent> */}
         </Animated.View>
       </Animated.View>
 
@@ -169,17 +166,22 @@ const OnePlaylistScreen = () => {
         scrollEventThrottle={16}
         style={{ paddingHorizontal: 20, paddingVertical: 10 }}
       >
-        {results.map(song => (
+
+    <TextComponent text={`${list.length} songs`} styles={{ textAlign: 'center',color:'black' }} />
+
+        {list.map(song => (
           <SongItemComponent
-            imageUrl={song.image}
+            key={song.encodeId}
+            imageUrl={song.thumbnailM}
             songName={song.title}
-            artistName={song.subtitle}
+            artistName={song.artistsNames}
+            onPress={() => handlePlay(song, list, navigation)}
             isButton
             icon={<Icon name="dots-three-horizontal" size={20} color="#555" />}
           />
         ))}
       </Animated.ScrollView>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => {
           // TODO: handle thêm bài hát
@@ -187,7 +189,15 @@ const OnePlaylistScreen = () => {
         }}
       >
         <Icon name="plus" size={24} color="#fff" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
+
+      <FloatingPlayer
+                onPress={() =>
+                navigation.navigate('Song', { song: TrackPlayer.getCurrentTrack })
+            }
+          /> 
+
+          
     </View>
   );
 };

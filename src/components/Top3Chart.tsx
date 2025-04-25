@@ -1,116 +1,138 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity } from 'react-native';
-import LinearGradient from 'react-native-linear-gradient';
-
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 
 interface SongProps {
   encodeId: string;
   title: string;
   artistsNames: string;
-  score: number;
   thumbnail: string;
+  rank: number;
+  previousRank: number;
 }
 
 interface Props {
   songs: SongProps[];
 }
 
-const Top3Chart: React.FC<Props> = ({ songs }) => {
-  const rankColor = (rank: number) => {
-    if (rank === 1) return '#FF3E4D';
-    if (rank === 2) return '#3B82F6';
-    return '#8B5CF6';
+const ZingChart: React.FC<Props> = ({ songs }) => {
+  const getRankChange = (current: number, previous: number) => {
+    if (previous === 0) return null;
+    const diff = previous - current;
+    if (diff > 0) return { symbol: '↑', color: '#1DD05D', text: `+${diff}` };
+    if (diff < 0) return { symbol: '↓', color: '#E35050', text: `${diff}` };
+    return { symbol: '•', color: '#999', text: '0' };
+  };
+
+  const renderItem = ({ item }: { item: SongProps }) => {
+    const change = getRankChange(item.rank, item.previousRank);
+
+    return (
+      <View style={styles.songRow}>
+        <Text style={styles.rank}>{item.rank}</Text>
+        <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
+        <View style={styles.infoContainer}>
+          <Text numberOfLines={1} style={styles.title}>{item.title}</Text>
+          <Text numberOfLines={1} style={styles.artists}>{item.artistsNames}</Text>
+        </View>
+        <View style={styles.changeContainer}>
+          {change && (
+            <Text style={[styles.changeText, { color: change.color }]}>
+              {change.symbol} {change.text}
+            </Text>
+          )}
+        </View>
+        <Text style={styles.more}>⋯</Text>
+      </View>
+    );
   };
 
   return (
-    <View style={styles.leftPanel}>
-      {songs.slice(0, 3).map((song, index) => {
-        const totalScore = songs
-          .slice(0, 3)
-          .reduce((acc, s) => acc + s.score, 0);
-
-        const percent = Math.round((song.score / totalScore) * 100);
-
-        return (
-            <TouchableOpacity
-                key={song.encodeId}
-                onPress={() => console.log('Song pressed')}>
-                <LinearGradient
-                    key={index}
-                    colors={['#607390', '#6B7655']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={styles.songRow}
-                    >
-                    <Text style={[styles.rank, { color: rankColor(index + 1) }]}>
-                        {index + 1}
-                    </Text>
-                    <Image source={{ uri: song.thumbnail }} style={styles.thumbnail} />
-                    <View style={{ flex: 1 }}>
-                        <Text style={styles.title}>{song.title}</Text>
-                        <Text style={styles.artist}>{song.artistsNames}</Text>
-                    </View>
-                    <Text style={styles.percent}>{percent}%</Text>
-                </LinearGradient>
-            </TouchableOpacity>
-          );
-          
-      })}
-
-      <TouchableOpacity style={styles.moreButton}>
-        <Text style={styles.moreButtonText}>Xem thêm</Text>
+    <View style={styles.container}>
+      <Text style={styles.updateText}>Cập nhật 23.04.2025 - 06:30</Text>
+      <Text style={styles.header}>#zingchart</Text>
+      <FlatList
+        data={songs.slice(0, 5)}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.encodeId}
+      />
+      <TouchableOpacity style={styles.seeAllButton}>
+        <Text style={styles.seeAllText}>Xem tất cả</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  leftPanel: {
-    width: '100%',
+  container: {
+    backgroundColor: '#191919',
+    padding: 16,
+    borderRadius: 12,
+    margin: 10,
+  },
+  updateText: {
+    fontSize: 12,
+    color: '#aaa',
+    marginBottom: 4,
+  },
+  header: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    color: '#D14EFF',
+    marginBottom: 12,
   },
   songRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 12,
-    marginBottom: 10,
-    padding: 10,
+    marginBottom: 12,
   },
   rank: {
-    fontSize: 22,
+    width: 24,
+    color: '#fff',
+    fontSize: 16,
     fontWeight: 'bold',
-    width: 30,
     textAlign: 'center',
   },
   thumbnail: {
-    width: 48,
-    height: 48,
+    width: 50,
+    height: 50,
     borderRadius: 6,
     marginHorizontal: 10,
   },
+  infoContainer: {
+    flex: 1,
+    justifyContent: 'center',
+  },
   title: {
     color: '#fff',
+    fontSize: 14,
     fontWeight: '600',
   },
-  artist: {
-    color: '#bbb',
-    fontSize: 13,
+  artists: {
+    color: '#ccc',
+    fontSize: 12,
   },
-  percent: {
-    fontWeight: 'bold',
-    color: '#fff',
-  },
-  moreButton: {
-    borderColor: '#fff',
-    borderWidth: 1,
-    paddingVertical: 8,
-    borderRadius: 20,
+  changeContainer: {
+    width: 40,
     alignItems: 'center',
-    marginTop: 10,
   },
-  moreButtonText: {
-    color: '#fff',
+  changeText: {
+    fontSize: 12,
+    fontWeight: '600',
+  },
+  more: {
+    fontSize: 18,
+    color: '#aaa',
+    paddingHorizontal: 6,
+  },
+  seeAllButton: {
+    marginTop: 12,
+    alignItems: 'center',
+  },
+  seeAllText: {
+    color: '#1DB954',
+    fontWeight: '600',
     fontSize: 14,
   },
 });
 
-export default Top3Chart;
+export default ZingChart;

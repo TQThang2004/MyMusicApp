@@ -4,12 +4,13 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Slider from '@react-native-community/slider';
-import TrackPlayer, { usePlaybackState, useProgress, State } from 'react-native-track-player';
+import TrackPlayer, { usePlaybackState, useProgress, State, Event } from 'react-native-track-player';
 import styles from './SongDetailStyle';
 
 const SongDetailScreen = ({ navigation, route }: any) => {
   const { song } = route.params;
   const [isPlaying, setIsPlaying] = useState(true);
+  const [currentSong, setCurrentSong] = useState(song);  // Store current song details
   const playbackState = usePlaybackState();
   const progress = useProgress();
 
@@ -23,6 +24,54 @@ const SongDetailScreen = ({ navigation, route }: any) => {
       setIsPlaying(true);
     }
   };
+
+  async function skipToNext() {
+    await TrackPlayer.skipToNext();
+  }
+  async function skipToPrevious() {
+    await TrackPlayer.skipToPrevious();
+  }
+
+  async function setupPlayer() {
+    try {
+      const trackIndex = await TrackPlayer.getCurrentTrack();
+  
+      if (trackIndex === null) {
+        console.log('No track is currently playing.');
+        return;
+      }
+  
+      const trackObject = await TrackPlayer.getTrack(trackIndex);
+  
+      if (trackObject) {
+        console.log(`Title: ${trackObject.title}`);
+        // Update the current song details based on track
+        setCurrentSong({
+          title: trackObject.title,
+          artistsNames: trackObject.artist,
+          image: trackObject.artwork || song.image,
+        });
+      } else {
+        console.log('Track not found.');
+      }
+    } catch (error) {
+      console.error('Error setting up player:', error);
+    }
+  }
+
+  useEffect(() => {
+    const trackChangedListener = TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async () => {
+      setupPlayer();
+    });
+
+    return () => {
+      trackChangedListener.remove();
+    };
+  }, []);
+
+  useEffect(() => {
+    setupPlayer();
+  }, []);
 
   const seekTo = async (value: number) => {
     await TrackPlayer.seekTo(value);
@@ -40,16 +89,16 @@ const SongDetailScreen = ({ navigation, route }: any) => {
       </View>
 
       <Image
-        source={{ uri: song.image || song.thumbnailM || song.artwork }}
+        source={{ uri: currentSong.image || song.thumbnailM || song.artwork }}
         style={styles.albumArt}
       />
 
       <View style={styles.songInfo}>
-        <Text style={styles.songTitle}>{song.title}</Text>
+        <Text style={styles.songTitle}>{currentSong.title}</Text>
         <Text style={styles.artist}>
-          {Array.isArray(song.artists)
-            ? song.artists.map((a: { name: any; }) => a.name).join(', ')
-            : (song.artists?.name || song.artists || 'Unknown')}
+          {Array.isArray(currentSong.artistsNames)
+            ? currentSong.artistsNames.join(', ')
+            : currentSong.artistsNames || 'Unknown'}
         </Text>
       </View>
 
@@ -81,7 +130,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
         <TouchableOpacity>
           <Ionicons name="shuffle" size={24} />
         </TouchableOpacity>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={skipToPrevious}>
           <Ionicons name="play-skip-back" size={24} />
         </TouchableOpacity>
 
@@ -96,7 +145,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
           />
         </TouchableOpacity>
 
-        <TouchableOpacity>
+        <TouchableOpacity onPress={skipToNext}>
           <Ionicons name="play-skip-forward" size={24} />
         </TouchableOpacity>
         <TouchableOpacity>
