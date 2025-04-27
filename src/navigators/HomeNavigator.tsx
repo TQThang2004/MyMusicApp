@@ -3,7 +3,6 @@ import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { HomeScreen, SearchScreen, ProfileScreen, PlaylistScreen } from '../screens';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import MyPlaylistScreen from '../screens/playlist/MyPlaylistScreen';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
 
 const Tab = createBottomTabNavigator();
