@@ -4,6 +4,7 @@ import { ZingChartService } from '../../services/zingChartServices';
 import UpdateText from '../../components/UpdateText';
 import { HomeService } from '../../services/homeServices';
 import TrackPlayer from 'react-native-track-player';
+import { handlePlay } from '../../services/handlePlay';
 
 interface SongProps {
   encodeId: string;
@@ -21,26 +22,26 @@ interface Props {
 
 const ZingChart: React.FC<Props> = ({ songs, navigation }:any) => {
 
-  const handlePlay = async (item: any) => {
-    const songData = await HomeService.fetchSongDetails(item.encodeId);
-    const songInfoData = await HomeService.fetchInfoSongDetails(item.encodeId);
-    console.log('songInfoData', songInfoData);
-    if (!songData) return;
+  // const handlePlay = async (item: any) => {
+  //   const songData = await HomeService.fetchSongDetails(item.encodeId);
+  //   const songInfoData = await HomeService.fetchInfoSongDetails(item.encodeId);
+  //   console.log('songInfoData', songInfoData);
+  //   if (!songData) return;
 
-    console.log('songData', songData);
+  //   console.log('songData', songData);
 
-    await TrackPlayer.reset();
-    await TrackPlayer.add({
-      id: item.encodeId,
-      url: songData['128'] || songData['320'] || songData['256'],
-      title: item.title,
-      artist: item.artistsNames || 'Unknown',
-      artwork: item.thumbnailM,
-    });
-    await TrackPlayer.play();
-    console.log('Playing song:', item.title);
-    navigation.navigate('Song', { song: item });
-  };
+  //   await TrackPlayer.reset();
+  //   await TrackPlayer.add({
+  //     id: item.encodeId,
+  //     url: songData['128'] || songData['320'] || songData['256'],
+  //     title: item.title,
+  //     artist: item.artistsNames || 'Unknown',
+  //     artwork: item.thumbnailM,
+  //   });
+  //   await TrackPlayer.play();
+  //   console.log('Playing song:', item.title);
+  //   navigation.navigate('Song', { song: item });
+  // };
 
 
   const renderItem = ({ item, index }: { item: SongProps; index: number }) => {
@@ -48,7 +49,7 @@ const ZingChart: React.FC<Props> = ({ songs, navigation }:any) => {
 
     return (
       <View style={styles.songRow}>
-        <TouchableOpacity key={item.encodeId} onPress={() => handlePlay(item)} style={{ flexDirection: 'row', alignItems: 'center', flex: 1}}>
+        <TouchableOpacity key={item.encodeId} onPress={() => handlePlay(item, songs, navigation)} style={{ flexDirection: 'row', alignItems: 'center', flex: 1}}>
         <Text style={styles.rank}>{(index+1)}</Text>
           <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
           {/* <View style={styles.changeContainer}>

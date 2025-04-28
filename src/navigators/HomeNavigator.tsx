@@ -1,9 +1,10 @@
   // src/navigators/HomeNavigator.jsx
 import React, { useState } from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { HomeScreen, SearchScreen, ProfileScreen, PlaylistScreen } from '../screens';
+import { HomeScreen, SearchScreen, ProfileScreen } from '../screens';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { getBottomSpace } from 'react-native-iphone-x-helper';
+import MyPlaylistScreen from '../screens/playlist/MyPlaylistScreen';
 
 const Tab = createBottomTabNavigator();
 
@@ -55,7 +56,7 @@ const HomeNavigator = () => {
         {(props) => <HomeScreen {...props} setIsBottomSheetOpen={setIsBottomSheetOpen} />}
       </Tab.Screen>
       <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="PlayList" component={PlaylistScreen} />
+      <Tab.Screen name="PlayList" component={MyPlaylistScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
     </>

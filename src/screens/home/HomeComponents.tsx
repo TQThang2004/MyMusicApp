@@ -74,8 +74,8 @@ const HomeComponents = (props: any) => (
             <Text style={homeStyles.sectionTitle}>Chill</Text>
             <TouchableOpacity onPress={() => 
               {
-                props.navigation.navigate('Playlist', { chillPlaylists: props.chillPlaylists }) 
-                console.log("Chill Playlists: -------",props.chillPlaylists)
+                props.navigation.navigate('Playlist', { playlists: props.playlists }) 
+                console.log("Chill Playlists: -------",props.playlists)
               }
               }>
               <Text style={homeStyles.textSeeAll}>See all</Text>
@@ -154,8 +154,8 @@ const HomeComponents = (props: any) => (
             <Text style={homeStyles.sectionTitle}>Top 100</Text>
             <TouchableOpacity onPress={() => 
               {
-                props.navigation.navigate('Playlist', { top100: props.top100 }) 
-                console.log("Chill Playlists: -------",props.top100)
+                props.navigation.navigate('Playlist', { playlists: props.top100 }) 
+                console.log("Top 100 Playlists: -------",props.top100)
               }
               }>
               <Text style={homeStyles.textSeeAll}>See all</Text>

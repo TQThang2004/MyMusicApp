@@ -23,6 +23,8 @@ const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 const OnePlaylistScreen = ({route, navigation}:any) => {
 
+  console.log("-----------",route)
+
   const [list, setList] = useState<{ thumbnailM: string;encodeId:string, title: string; artistsNames: string }[]>([]);
 
   const { playlist } = route.params;
@@ -60,7 +62,7 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
             url: songData['128'] || songData['320'] || songData['256'],
             title: item.title,
             artist: item.artistsNames || 'Unknown',
-            artwork: item.thumbnailM,
+            thumbnailM: item.thumbnailM ||item.thumbnail,
           };
         })
       );
@@ -120,7 +122,7 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
         ]}
       >
         <Animated.Image
-          source={{uri: playlist.thumbnailM}}
+          source={{uri: playlist.thumbnailM || playlist.thumbnail}}
 
           style={[
             styles.backgroundImage,
@@ -175,10 +177,11 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
         <Icon name="plus" size={24} color="#fff" />
       </TouchableOpacity> */}
 
-      <FloatingPlayer
+      <FloatingPlayer 
                 onPress={() =>
                 navigation.navigate('Song', { song: TrackPlayer.getCurrentTrack })
             }
+            style={{ bottom: 0 }}
           /> 
 
           

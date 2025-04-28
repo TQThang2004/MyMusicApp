@@ -1,17 +1,23 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity } from 'react-native';
+import React, { useContext, useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Slider from '@react-native-community/slider';
 import TrackPlayer, { usePlaybackState, useProgress, State, Event } from 'react-native-track-player';
 import styles from './SongDetailStyle';
+import { AuthContext } from '../../context/AuthContext';
+import { FavoriteService } from '../../services/favoriteService';
+
 
 const SongDetailScreen = ({ navigation, route }: any) => {
+  const {user} = useContext(AuthContext)
   const { song } = route.params;
   const [isPlaying, setIsPlaying] = useState(true);
-  const [currentSong, setCurrentSong] = useState(song);  // Store current song details
-  const playbackState = usePlaybackState();
+  const [currentSong, setCurrentSong] = useState(song);
+  const [liked, setLiked] = useState(false);
+  const [isShuffle, setIsShuffle] = useState(false);
+  const [isRepeat, setIsRepeat] = useState(false);
   const progress = useProgress();
 
   const togglePlayPause = async () => {
@@ -25,9 +31,67 @@ const SongDetailScreen = ({ navigation, route }: any) => {
     }
   };
 
-  async function skipToNext() {
-    await TrackPlayer.skipToNext();
+  const handleLikePress = async () => {
+    try { 
+      console.log("curent SOng",currentSong)
+      if (!liked) {
+        await FavoriteService.addFavorite({
+          userId: user.id,
+          songId: currentSong.encodeId,
+          name: currentSong.title,
+          thumbnailM: currentSong.thumbnailM,
+        });
+        setLiked(true);
+      } else {
+        await FavoriteService.removeFavorite({
+          userId: user.id,
+          songId: currentSong.encodeId,
+        });
+        setLiked(false);
+      }
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Có lỗi xảy ra';
+      Alert.alert('❌ Lỗi', errorMessage);
+    }
+  };
+
+  const handleShuffle = () => {
+    setIsShuffle(!isShuffle)
   }
+
+  const checkIfLiked = async () => {
+    try {
+      console.log("checkIfLiked",song.encodeId)
+      console.log("checkIfLiked",user.id)
+      const isFav = await FavoriteService.isFavorite({
+        userId: user.id,
+        songId: song.encodeId,
+      });
+      console.log("isFav",isFav)
+      setLiked(isFav);
+    } catch (error) {
+      console.error('Error checking if song is liked:', error);
+    }
+  };
+
+  async function skipToNext() {
+      try {
+        if (isShuffle) {
+          const queue = await TrackPlayer.getQueue();
+          if (queue.length > 0) {
+            const randomIndex = Math.floor(Math.random() * queue.length);
+            await TrackPlayer.skip(randomIndex);
+
+          }
+        } else {
+          await TrackPlayer.skipToNext();
+        }
+      } catch (error) {
+        console.error('Error skipping to next track:', error);
+      }
+    }
+    
+
   async function skipToPrevious() {
     await TrackPlayer.skipToPrevious();
   }
@@ -44,13 +108,18 @@ const SongDetailScreen = ({ navigation, route }: any) => {
       const trackObject = await TrackPlayer.getTrack(trackIndex);
   
       if (trackObject) {
-        console.log(`Title: ${trackObject.title}`);
+        console.log(`Title trackObject: ${trackObject.title}`);
+        console.log("thumbnailM-------",trackObject.thumbnailM)
+        
         // Update the current song details based on track
         setCurrentSong({
+          encodeId: trackObject.id,
           title: trackObject.title,
           artistsNames: trackObject.artist,
-          image: trackObject.artwork || song.image,
+          thumbnailM: trackObject.thumbnailM,
+          url: trackObject.url
         });
+        console.log('Updated currentSong:', trackObject);
       } else {
         console.log('Track not found.');
       }
@@ -58,6 +127,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
       console.error('Error setting up player:', error);
     }
   }
+  
 
   useEffect(() => {
     const trackChangedListener = TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async () => {
@@ -70,11 +140,33 @@ const SongDetailScreen = ({ navigation, route }: any) => {
   }, []);
 
   useEffect(() => {
+    if (currentSong) {
+      console.log('Updated song:', currentSong);
+    }
+  }, [currentSong]);
+
+  // useEffect(() => {
+  //   const playbackQueueEndedListener = TrackPlayer.addEventListener(Event.PlaybackQueueEnded, async () => {
+  //     if (isRepeat) {
+  //       await TrackPlayer.seekTo(0);
+  //       await TrackPlayer.play();
+  //     }
+  //   });
+
+  //   return () => {
+  //     playbackQueueEndedListener.remove();
+  //   };
+  // }, [isRepeat]);
+
+  useEffect(() => {
     setupPlayer();
+    checkIfLiked();
   }, []);
+  
 
   const seekTo = async (value: number) => {
     await TrackPlayer.seekTo(value);
+    console.log('Seeked to:', song);
   };
 
   return (
@@ -89,27 +181,31 @@ const SongDetailScreen = ({ navigation, route }: any) => {
       </View>
 
       <Image
-        source={{ uri: currentSong.image || song.thumbnailM || song.artwork }}
+        source={{ uri: currentSong.thumbnailM}}
         style={styles.albumArt}
       />
 
       <View style={styles.songInfo}>
         <Text style={styles.songTitle}>{currentSong.title}</Text>
         <Text style={styles.artist}>
-          {Array.isArray(currentSong.artistsNames)
-            ? currentSong.artistsNames.join(', ')
+          {Array.isArray(currentSong.artists)
+            ? currentSong.artists.join(', ')
             : currentSong.artistsNames || 'Unknown'}
-        </Text>
+        </Text> 
       </View>
 
-      <View style={styles.iconRow}>
-        <TouchableOpacity>
-          <AntDesign name="hearto" size={24} />
-        </TouchableOpacity>
-        <TouchableOpacity>
-          <Entypo name="dots-three-horizontal" size={20} />
-        </TouchableOpacity>
-      </View>
+        <View style={styles.iconRow}>
+        <TouchableOpacity onPress={handleLikePress}>
+        <AntDesign
+          name={liked ? 'heart' : 'hearto'} 
+          size={24}
+          color={liked ? 'red' : 'black'}
+        />
+      </TouchableOpacity>
+          <TouchableOpacity>
+            <Entypo name="dots-three-horizontal" size={20} />
+          </TouchableOpacity>
+        </View>
 
       <Slider
         style={{ width: '80%', height: 40 }}
@@ -127,8 +223,8 @@ const SongDetailScreen = ({ navigation, route }: any) => {
       </View>
 
       <View style={styles.controls}>
-        <TouchableOpacity>
-          <Ionicons name="shuffle" size={24} />
+        <TouchableOpacity onPress={handleShuffle}>
+          <Ionicons name="shuffle" size={24} color={isShuffle?'green': 'black'} />
         </TouchableOpacity>
         <TouchableOpacity onPress={skipToPrevious}>
           <Ionicons name="play-skip-back" size={24} />

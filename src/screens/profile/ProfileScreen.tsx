@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
-import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import AntDesign from 'react-native-vector-icons/AntDesign';
 import FloatingPlayer from '../../components/FloatPlayer';
 import TrackPlayer from 'react-native-track-player';
 import auth from '@react-native-firebase/auth';
@@ -61,6 +62,20 @@ const handleLogout = async () => {
         </TouchableOpacity>
       </View>
       <Text style={styles.sectionTitle}>Cá nhân</Text>
+
+
+      {/* TouchableOpacity section favorite song */}
+      <TouchableHighlight  
+        
+        underlayColor="gray"
+        onPress={() => navigation.navigate('Song')}
+      >
+        <View style={styles.openSongButton}>
+          <AntDesign name="staro" size={20} color="black" />
+          <Text style={styles.openSongText}>Favorite Song</Text>
+
+        </View>
+      </TouchableHighlight >
     </ScrollView>
     <FloatingPlayer
                 onPress={() =>
@@ -98,4 +113,21 @@ const styles = StyleSheet.create({
     borderTopWidth: 1, borderColor: '#ccc',
   },
   songImage: { width: 50, height: 50, borderRadius: 4, marginRight: 12 },
+  openSongButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    // backgroundColor: '#673AB7',
+    // marginHorizontal: 16,
+    // marginTop: 16,
+    paddingVertical: 12,
+    paddingHorizontal: 16
+
+  },
+  openSongText: {
+    color: 'black',
+    fontSize: 16,
+    fontWeight: '300',
+    marginLeft: 8,
+  },
+  
 });

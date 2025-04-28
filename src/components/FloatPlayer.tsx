@@ -3,7 +3,12 @@ import { View, Text, Image, TouchableOpacity } from 'react-native';
 import TrackPlayer, { usePlaybackState, useTrackPlayerEvents, Event, State } from 'react-native-track-player';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
-const FloatingPlayer = ({ onPress }: { onPress: () => void }) => {
+interface FloatingPlayerProps {
+  onPress: () => void;
+  style?: object; // <== thêm dòng này
+}
+
+const FloatingPlayer = ({ onPress, style }: FloatingPlayerProps) => {
   const playbackState = usePlaybackState();
   const [track, setTrack] = useState<any>(null);
 
@@ -40,8 +45,8 @@ const FloatingPlayer = ({ onPress }: { onPress: () => void }) => {
   if (!track) return null;
 
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
-      <Image source={{ uri: track.artwork }} style={styles.image} />
+    <TouchableOpacity onPress={onPress} style={[styles.container, style]}>
+      <Image source={{ uri: track.thumbnailM }} style={styles.image} />
       <View style={styles.textContainer}>
         <Text numberOfLines={1} style={styles.title}>{track.title}</Text>
         <Text numberOfLines={1} style={styles.artist}>{track.artist}</Text>

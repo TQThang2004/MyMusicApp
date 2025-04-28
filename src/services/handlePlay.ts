@@ -17,7 +17,7 @@ export const handlePlay = async (selectedItem: any, list:any, navigation:any) =>
           url: songData['128'] || songData['320'] || songData['256'],
           title: item.title,
           artist: item.artistsNames || 'Unknown',
-          artwork: item.thumbnailM,
+          thumbnailM: item.thumbnailM,
         };
       })
     );
@@ -37,3 +37,6 @@ export const handlePlay = async (selectedItem: any, list:any, navigation:any) =>
     console.log('Playing song:', selectedItem.title);
     navigation.navigate('Song', { song: selectedItem });
   };
+
+
+  

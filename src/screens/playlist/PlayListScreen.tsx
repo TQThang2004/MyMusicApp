@@ -1,53 +1,44 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   Animated,
-  TouchableOpacity,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Entypo';
 import { AuthContext } from '../../context/AuthContext';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { SongItemComponent } from '../../components';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { PlaylistService } from '../../services/playlistServices';
 
 
-const PlaylistScreen = ({navigation}:any) => {
+const PlaylistScreen = ({ navigation, route }: any) => {
+
 
   const { user } = useContext(AuthContext);
 
   interface PlaylistItem {
-    id: string;
+    encodeId: string;
     name: string;
     thumbnail: string;
   }
   
   const [playlists, setPlaylists] = useState<PlaylistItem[]>([]);
 
-  
-  useFocusEffect(
-    useCallback(() => {
-      const fetchPlaylists = async () => {
-        try {
-          console.log('Fetching playlists for user ID:', user.id);
-          const response = await fetch(`http://192.168.2.5:5000/api/main/get-playlist/${user.id}`);
-          console.log('Playlist response:', response);
-          const data = await response.json();
-          console.log('Playlist data:', data);
-          setPlaylists(data.playlist.result);
-          console.log('Playlist data:', playlists);
-        } catch (error) {
-          console.error('Lỗi khi tải playlist:', error);
-        }
-      };
+  useEffect(() => {
+    if (route.params?.playlists) {
+      const mapped = route.params.playlists.map((playlist: any) => ({
+        encodeId: playlist.encodeId,
+        name: playlist.title,
+        thumbnail: playlist.thumbnail,
+      }));
+      console.log("Lít",mapped)
+      setPlaylists(mapped);
+    }
+  }, [route.params]);
 
-      if (user?.id) {
-        fetchPlaylists();
-      }
-    }, [])
-  );
+
+ 
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -64,33 +55,21 @@ const PlaylistScreen = ({navigation}:any) => {
       >
         {playlists.map((item) => (
           <SongItemComponent
-            key={item.id}
+            key={item.encodeId}
             imageUrl={item.thumbnail}
             songName={item.name}
-            artistName={user.username}
+            artistName={"Nhiều nghẹ sĩ"}
             isButton
             icon={<Icon name="dots-three-horizontal" size={20} color="#555" />}
             onPress={() => {
-              navigation.navigate('OnePlaylist', {
-                playlistId: item.id,
-                playlistName: item.name,
-                thumbnail: item.thumbnail,
-                creatorName: user.username
-              });
+              console.log("Playlist One Item", item)
+              navigation.navigate('OnePlaylist', {playlist: item});
             }}
           />
         ))}
       </Animated.ScrollView> 
 
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => {
-          console.log('Add button pressed');
-          navigation.navigate('CreatePlaylist');
-        }}
-      >
-        <Ionicons name="add" size={32} color="white" />
-      </TouchableOpacity>
+    
     </View>
   );
 };

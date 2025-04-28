@@ -37,6 +37,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
         switch (section.sectionType) {
           case 'playlist':
             if (section.title === 'Chill') {
+              console.log('Chilll', chillPlaylists);
               setChillPlaylists(section.items);
             }else if (section.title === 'Top 100') {
               setTop100Playlists(section.items);
@@ -73,7 +74,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
           url: songData['128'] || songData['320'] || songData['256'],
           title: item.title,
           artist: item.artistsNames || 'Unknown',
-          artwork: item.thumbnailM,
+          thumbnailM: item.thumbnailM,
         };
       })
     );
