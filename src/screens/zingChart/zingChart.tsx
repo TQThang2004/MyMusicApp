@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
 import { ZingChartService } from '../../services/zingChartServices';
 import UpdateText from '../../components/UpdateText';
 import { HomeService } from '../../services/homeServices';
 import TrackPlayer from 'react-native-track-player';
 import { handlePlay } from '../../services/handlePlay';
+import { AuthContext } from '../../context/AuthContext';
 
 interface SongProps {
   encodeId: string;
@@ -21,6 +22,9 @@ interface Props {
 }
 
 const ZingChart: React.FC<Props> = ({ songs, navigation }:any) => {
+
+
+  const {user} = useContext(AuthContext)
 
   // const handlePlay = async (item: any) => {
   //   const songData = await HomeService.fetchSongDetails(item.encodeId);
@@ -49,7 +53,7 @@ const ZingChart: React.FC<Props> = ({ songs, navigation }:any) => {
 
     return (
       <View style={styles.songRow}>
-        <TouchableOpacity key={item.encodeId} onPress={() => handlePlay(item, songs, navigation)} style={{ flexDirection: 'row', alignItems: 'center', flex: 1}}>
+        <TouchableOpacity key={item.encodeId} onPress={() => handlePlay(item, songs, navigation, user)} style={{ flexDirection: 'row', alignItems: 'center', flex: 1}}>
         <Text style={styles.rank}>{(index+1)}</Text>
           <Image source={{ uri: item.thumbnail }} style={styles.thumbnail} />
           {/* <View style={styles.changeContainer}>

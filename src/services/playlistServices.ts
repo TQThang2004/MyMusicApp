@@ -18,7 +18,7 @@ export const PlaylistService = {
     try {
       console.log('Fetching playlist details for ID:', playlistId);
       const response = await fetch(`http://${IP}:${PORT}/api/detailplaylist?playlistId=${playlistId}`);
-      console.log('Response status:', response.status);
+      console.log('Responsesssssssssssss status:', response);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }

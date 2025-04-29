@@ -1,10 +1,12 @@
-import React, { useRef, useState, useCallback, useEffect } from 'react';
+import React, { useRef, useState, useCallback, useEffect, useContext } from 'react';
 import { FlatList} from 'react-native';
 import TrackPlayer from 'react-native-track-player';
 import HomeComponents from './HomeComponents';
 import SongBottomSheet, { SongBottomSheetRef } from '../../components/SongBottomSheet';
 import { HomeService } from '../../services/homeServices';
 import FloatingPlayer from '../../components/FloatPlayer';
+import { AuthContext } from '../../context/AuthContext';
+import { HistoryService } from '../../services/historyService';
 
 
 const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
@@ -16,6 +18,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
   const [artists, setArtists] = useState<any[]>([]);
   const bottomSheetRef = useRef<SongBottomSheetRef>(null);
   const [selectedSong, setSelectedSong] = useState<any>(null);
+  const {user} = useContext(AuthContext)
 
   // Fetch data effects
   useEffect(() => {
@@ -61,20 +64,24 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
 
   const handlePlay = async (selectedItem: any) => {
 
-  
     await TrackPlayer.reset();
   
     const tracks = await Promise.all(
       newReleaseSongs.map(async (item: any) => {
         const songData = await HomeService.fetchSongDetails(item.encodeId);
+        const songData2 = await HomeService.fetchInfoSongDetails(item.encodeId);
+        console.log('songData:', songData);
+        console.log('songData2:', songData2);
+        
         if (!songData) return null;
-  
+
         return {
           id: item.encodeId,
           url: songData['128'] || songData['320'] || songData['256'],
           title: item.title,
           artist: item.artistsNames || 'Unknown',
           thumbnailM: item.thumbnailM,
+          genresIds: songData.genreIds
         };
       })
     );

@@ -21,17 +21,16 @@ const handleLogout = async () => {
 };
 
   const { user, logout } = useContext(AuthContext);
+  console.log(user)
   return (
     <>
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Cá nhân</Text>
         <View style={styles.icons}>
+        <Icon name="notifications-none" size={24} color="#000" style={styles.icon} />
           <Icon name="settings" size={24} color="#000" style={styles.icon} />
-          <Icon name="notifications-none" size={24} color="#000" style={styles.icon} />
-          <Icon name="search" size={24} color="#000" style={styles.icon} />
         </View>
-
       </View>
 
       <View style={styles.profile}>
@@ -40,8 +39,8 @@ const handleLogout = async () => {
           style={styles.avatar}
         />
         <View>
-          <Text style={styles.name}>Nguyễn Hồng Phúc</Text>
-          <Text style={styles.level}>BASIC</Text>
+          <Text style={styles.name}>{user.username}</Text>
+          <Text style={styles.level}>{user.email}</Text>
         </View>
       </View>
 
@@ -99,7 +98,7 @@ const styles = StyleSheet.create({
   },
   avatar: { width: 60, height: 60, borderRadius: 30, marginRight: 12 },
   name: { fontSize: 18, fontWeight: '600' },
-  level: { width:42,backgroundColor: '#ddd', paddingHorizontal: 1, borderRadius: 6, marginTop: 4 },
+  level: {  paddingHorizontal: 1, borderRadius: 6, marginTop: 4 },
   upgradeBox: {
     margin: 16, padding: 16, backgroundColor: '#e3d9ff', borderRadius: 12,
   },

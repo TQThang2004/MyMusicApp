@@ -4,25 +4,18 @@ import {
   Text,
   StyleSheet,
   Animated,
-  TouchableOpacity,
-  Modal,
-  TextInput,
-  Button,
-  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Entypo';
 import { AuthContext } from '../../context/AuthContext';
 import { useFocusEffect} from '@react-navigation/native';
 import { SongItemComponent } from '../../components';
-import { PlaylistService } from '../../services/playlistServices';
 
 
-const MyPlaylistScreen = ({navigation}:any) => {
+const FavoritePlaylistScreen = ({navigation}:any) => {
 
   const { user } = useContext(AuthContext);
-  const [name, setName] = useState('');
-  const [modalVisible, setModalVisible] = useState(false);
+
 
   interface PlaylistItem {
     id: string;
@@ -32,11 +25,10 @@ const MyPlaylistScreen = ({navigation}:any) => {
   
   const [playlists, setPlaylists] = useState<PlaylistItem[]>([]);
 
-  
   const fetchPlaylists = async () => {
     try {
-      console.log('Fetching playlists for user ID:', user.id);
-      const response = await fetch(`http://192.168.2.5:5000/api/main/get-playlist/${user.id}`);
+      console.log('Fetching favorite playlists for user ID:', user.id);
+      const response = await fetch(`http://192.168.2.5:5000/api/favorite/song/${user.id}`);
       const data = await response.json();
       console.log('Playlist data:', data);
       setPlaylists(data.playlist.result);
@@ -52,19 +44,6 @@ const MyPlaylistScreen = ({navigation}:any) => {
       }
     }, [user?.id])
   );
-
-  
-  const onPressCreatePlaylist = async () => {
-    try {
-      const message = await PlaylistService.handleCreatePlaylist(name, user.id);
-      fetchPlaylists();
-      setName('');
-      setModalVisible(false);
-    } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : "Lỗi không xác định";
-      Alert.alert("❌ Thất bại", errorMessage);
-    }
-  };
 
 
 
@@ -102,49 +81,17 @@ const MyPlaylistScreen = ({navigation}:any) => {
         ))}
       </Animated.ScrollView> 
 
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => {
-          console.log('Add button pressed');
-          setModalVisible(true)
-        }}
-      >
-        <Ionicons name="add" size={32} color="white" />
-      </TouchableOpacity>
 
 
 
-      {/* Modal */}
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => setModalVisible(false)}
-      >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <TextInput
-              placeholder="Nhập tên playlist"
-              value={name}
-              onChangeText={setName}
-              style={styles.input}
-            />
-            <Button title="Tạo Playlist" onPress={onPressCreatePlaylist} />
-
-            {/* Nút đóng modal */}
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButton}>Đóng</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </Modal>
+    
 
 
     </View>
   );
 };
 
-export default MyPlaylistScreen;
+export default FavoritePlaylistScreen;
 
 const styles = StyleSheet.create({
   container: {

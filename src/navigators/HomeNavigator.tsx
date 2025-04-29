@@ -10,12 +10,12 @@ const Tab = createBottomTabNavigator();
 
 const HomeNavigator = () => {
     const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(false);
-    console.log("getBottom", getBottomSpace);
   return (
     <>
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
+        swipeEnabled: true,
         tabBarShowLabel: true,
         tabBarActiveTintColor: '#1DB954', 
         tabBarInactiveTintColor: 'gray', 
@@ -27,9 +27,6 @@ const HomeNavigator = () => {
           left: 0,
           right: 0,
           zIndex: 9,
-          height: 60 + getBottomSpace(),
-          paddingBottom: getBottomSpace(),
-
         },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName = 'home';

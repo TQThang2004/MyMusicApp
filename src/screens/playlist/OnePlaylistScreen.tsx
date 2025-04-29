@@ -1,4 +1,4 @@
-import React, { use, useEffect, useRef, useState } from 'react';
+import React, { use, useContext, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   View,
@@ -14,6 +14,8 @@ import { PlaylistService } from '../../services/playlistServices';
 import { HomeService } from '../../services/homeServices';
 import TrackPlayer from 'react-native-track-player';
 import FloatingPlayer from '../../components/FloatPlayer';
+import { HistoryService } from '../../services/historyService';
+import { AuthContext } from '../../context/AuthContext';
 
 const { height: screenHeight } = Dimensions.get('window');
 const HEADER_MAX_HEIGHT = screenHeight * 0.5;
@@ -23,7 +25,7 @@ const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 const OnePlaylistScreen = ({route, navigation}:any) => {
 
-  console.log("-----------",route)
+  const {user} = useContext(AuthContext)
 
   const [list, setList] = useState<{ thumbnailM: string;encodeId:string, title: string; artistsNames: string }[]>([]);
 
@@ -81,6 +83,14 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
     
       console.log('Playing song:', selectedItem.title);
       navigation.navigate('Song', { song: selectedItem });
+
+
+      HistoryService.addSongToHistory(
+            user.id,
+            selectedItem.encodeId,
+            selectedItem.title,
+            selectedItem.thumbnailM
+          ).catch(error => console.error('Failed to add to history:', error));
     };
 
 

@@ -18,7 +18,7 @@ export const SongService = {
         songId: string;
     }) {
         try {
-        const endpoint = isFavorite ? 'remove-favorite-song' : 'add-favorite-song';
+        const endpoint = isFavorite ? 'favorite/song/remove' : 'favorite/song/add';
         const response = await fetch(`http://${IP}:${PORT}/api/${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },

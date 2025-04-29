@@ -3,6 +3,7 @@ import { StyleSheet } from "react-native";
 const styles = StyleSheet.create({
     container: {
       flex: 1,
+      // width:360,
       backgroundColor: 'white',
       paddingTop: 60,
       alignItems: 'center',
@@ -27,6 +28,7 @@ const styles = StyleSheet.create({
       fontSize: 22,
       fontWeight: 'bold',
       color: 'black',
+      textAlign: 'center',
       backgroundColor: 'white',
     },
     artist: {

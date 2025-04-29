@@ -30,7 +30,7 @@ export const FavoriteService = {
     }
   },
 
-  async addFavorite({ userId, songId, name, thumbnailM }: { userId: string; songId: string; name: string; thumbnailM: string }) {
+  async addFavorite({ userId, songId, name, thumbnailM, genreIds }: { userId: string; songId: string; name: string; thumbnailM: string;genreIds: string }) {
     try {
       console.log('Adding to favorite:', { userId, songId, name, thumbnailM });  
       if (!thumbnailM) {
@@ -42,7 +42,7 @@ export const FavoriteService = {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, songId, name, thumbnailM }),
+        body: JSON.stringify({ userId, songId, name, thumbnailM, genreIds }),
       });
       console.log('Song Detail Response:', response);
       if (!response.ok) {

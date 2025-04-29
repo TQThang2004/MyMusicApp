@@ -1,11 +1,17 @@
 import TrackPlayer from "react-native-track-player";
 import { HomeService } from "./homeServices";
+import { HistoryService } from "./historyService";
 
-export const handlePlay = async (selectedItem: any, list:any, navigation:any) => {
+
+export const handlePlay = async (selectedItem: any, list:any, navigation:any, user?:any) => {
+
+  console.log(1)
 
     const fullList = list;
-  
+
+    console.log(2)
     await TrackPlayer.reset();
+    
   
     const tracks = await Promise.all(
       fullList.map(async (item: any) => {
@@ -21,6 +27,8 @@ export const handlePlay = async (selectedItem: any, list:any, navigation:any) =>
         };
       })
     );
+
+    
   
     const filteredTracks = tracks.filter((track) => track !== null);
   
@@ -36,7 +44,14 @@ export const handlePlay = async (selectedItem: any, list:any, navigation:any) =>
   
     console.log('Playing song:', selectedItem.title);
     navigation.navigate('Song', { song: selectedItem });
-  };
+
+    HistoryService.addSongToHistory(
+          user.id,
+          selectedItem.encodeId,
+          selectedItem.title,
+          selectedItem.thumbnailM
+        ).catch(error => console.error('Failed to add to history:', error));
+};
 
 
   

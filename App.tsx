@@ -44,24 +44,23 @@ const AppContent = () => {
 
   return (
     <>
-    <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
+      <StatusBar barStyle="dark-content" backgroundColor="transparent" translucent />
       <SafeAreaView style={{ flex: 1 }} edges={[]}>
         {isShowWelcome ? (
           <WelcomeScreen />
         ) : (
-          <NavigationContainer>
-            {user ? (
-                <>
-                  <MainNavigator />
-                </>
+          <GestureHandlerRootView style={{ flex: 1 }}>
+            <NavigationContainer>
+              {user ? (
+                <MainNavigator />
               ) : (
                 <AuthNavigator />
               )}
-          </NavigationContainer>
+            </NavigationContainer>
+          </GestureHandlerRootView>
         )}
       </SafeAreaView>
     </>
-      
   );
 };
 

@@ -4,9 +4,12 @@ import HomeNavigator from './HomeNavigator';
 import ArtistScreen from '../screens/artist/ArtistScreen';
 import FavoriteArtistScreen from '../screens/favoriteArtist/FavoriteArtistScreen';
 import PopularSongScreen from '../screens/popularSong/PopularSongScreen';
-import { PlaylistScreen, ProfileScreen, SongDetailScreen } from '../screens';
+import { ProfileScreen, SongDetailScreen } from '../screens';
 import OnePlaylistScreen from '../screens/playlist/OnePlaylistScreen';
 import ZingChartHome from '../screens/zingChart/zingChartHome';
+import LyricsScreen from '../screens/song/LyricScreen';
+import PlaylistScreen from '../screens/playlist/PlayListScreen';
+// import CreatePlaylistScreen from '../screens/playlist/CreatePlaylistScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -23,6 +26,8 @@ const MainNavigator = () => {
       <Stack.Screen name="Playlist" component={PlaylistScreen} />
       <Stack.Screen name="OnePlaylist" component={OnePlaylistScreen} />
       <Stack.Screen name="ZingChartHome" component={ZingChartHome} />
+      {/* <Stack.Screen name="CreatePlaylist" component={CreatePlaylistScreen} /> */}
+      <Stack.Screen name="Lyrics" component={LyricsScreen} />
       
     </Stack.Navigator>
     
