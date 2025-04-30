@@ -6,6 +6,7 @@ import SongBottomSheet, { SongBottomSheetRef } from '../../components/SongBottom
 import { HomeService } from '../../services/homeServices';
 import FloatingPlayer from '../../components/FloatPlayer';
 import { AuthContext } from '../../context/AuthContext';
+import { HistoryService } from '../../services/historyService';
 
 
 const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
@@ -14,6 +15,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
   const [chillPlaylists, setChillPlaylists] = useState<any[]>([]);
   const [top100Playlists, setTop100Playlists] = useState<any[]>([]);
   const [zingChart, setZingChart] = useState<any[]>([]);
+  const [recommendation, setRecommendation] = useState<any[]>([]);
   const [artists, setArtists] = useState<any[]>([]);
   const bottomSheetRef = useRef<SongBottomSheetRef>(null);
   const [selectedSong, setSelectedSong] = useState<any>(null);
@@ -28,11 +30,21 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
     };
     loadArtists();
   }, []);
+  useEffect(() => {
+    const loadRecommendation = async () => {
+      const sectionRecommedation = await HomeService.fetchRecommendation(user.id);
+      console.log('sectionRecommedation', sectionRecommedation);
+      setRecommendation(sectionRecommedation)
+    };
+    loadRecommendation();
+  }, []);
 
   useEffect(() => {
     const loadHomeData = async () => {
       const sections = await HomeService.fetchHomeData();
+      const sectionRecommedation = await HomeService.fetchRecommendation(user.id);
       console.log('sections', sections);
+      console.log('sectionRecommedation', sectionRecommedation);
       sections.forEach((section: any) => {
       
         if (!section?.sectionType) return;
@@ -61,19 +73,26 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
     loadHomeData();
   }, []);
 
-  const handlePlay = async (selectedItem: any) => {
+  const handlePlay = async (selectedItem: any, type :any) => {
 
     await TrackPlayer.reset();
+
+    let playlist =[];
+    if(type === "new-release"){
+      playlist = newReleaseSongs;
+    }else if(type === "recommend"){
+      playlist = recommendation;
+    }
   
     const tracks = await Promise.all(
-      newReleaseSongs.map(async (item: any) => {
-        const songData = await HomeService.fetchSongDetails(item.encodeId);
-        const songData2 = await HomeService.fetchInfoSongDetails(item.encodeId);
+      playlist.map(async (item: any) => {
+        const songData = await HomeService.fetchSongDetails(item.encodeId||item.id);
+        const songData2 = await HomeService.fetchInfoSongDetails(item.encodeId||item.id);
         
         if (!songData) return null;
 
         return {
-          id: item.encodeId,
+          id: item.encodeId||item.id,
           url: songData['128'] || songData['320'] || songData['256'],
           title: item.title,
           artist: item.artistsNames || 'Unknown',
@@ -97,6 +116,15 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
   
     console.log('Playing song:', selectedItem.title);
     navigation.navigate('Song', { song: selectedItem });
+
+    HistoryService.addSongToHistory(
+                  user.id,
+                  selectedItem.id,
+                  selectedItem.title || 'Unknown Title',
+                  selectedItem.thumbnailM,
+                  selectedItem.genresIds,
+                  selectedItem.artist||selectedItem.artistsNames||selectedItem.artists
+                ).catch(error => console.error('Failed to add to history:', error));
   };
 
 
@@ -118,6 +146,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
             artists={artists}
             zingChart={zingChart}
             top100={top100Playlists}
+            recommendation={recommendation}
             navigation={navigation}
             handlePlay={handlePlay}
             handleOpenBottomSheet={handleOpenBottomSheet}

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, Image, TouchableOpacity, ScrollView, StyleSheet, TouchableHighlight } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import AntDesign from 'react-native-vector-icons/AntDesign';
@@ -10,7 +10,8 @@ import { AuthContext } from '../../context/AuthContext';
 
 export default function ProfileScreen(navigation: any) {
 
-  {}
+  const [showModal, setShowModal] = useState(false);
+
 
 
 const handleLogout = async () => {
@@ -32,7 +33,14 @@ const handleLogout = async () => {
         <Text style={styles.title}>{user.avatar}</Text>
         <View style={styles.icons}>
         <Icon name="notifications-none" size={24} color="#000" style={styles.icon} />
-          <Icon name="settings" size={24} color="#000" style={styles.icon} />
+        <Icon
+            name="settings"
+            size={24}
+            color="#000"
+            style={styles.icon}
+            onPress={() => setShowModal(true)}
+          />
+
         </View>
       </View>
 
@@ -140,13 +148,15 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   logoutButton: {
-    marginTop: 30,
+    
+    marginTop: 60,
     marginBottom: 50,
     marginHorizontal: 16,
     paddingVertical: 12,
     backgroundColor: '#ff3b30',
     borderRadius: 10,
     alignItems: 'center',
+    opacity:0.9
   },
   logoutText: {
     color: '#fff',

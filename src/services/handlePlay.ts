@@ -49,7 +49,9 @@ export const handlePlay = async (selectedItem: any, list:any, navigation:any, us
           user.id,
           selectedItem.encodeId,
           selectedItem.title,
-          selectedItem.thumbnailM
+          selectedItem.thumbnailM,
+          selectedItem.genreIds,
+          selectedItem.artist,
         ).catch(error => console.error('Failed to add to history:', error));
 };
 

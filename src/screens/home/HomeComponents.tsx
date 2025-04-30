@@ -29,6 +29,41 @@ const HomeComponents = (props: any) => (
     </View>
 
 
+    {/* Recommend*/}
+    {props.recommendation?.length > 0 && (
+      <>
+        <View style={homeStyles.flex}>
+          <Text style={homeStyles.sectionTitle}>Recommend for you</Text>
+          <TouchableOpacity onPress={() => 
+              {
+                console.log("Props: -------",props)
+                props.navigation.navigate('PopularSong', { popularSongs: props.recommendation }) 
+                console.log("PopularSong: -------",props.recommendation)
+              }
+              }>
+            <Text style={homeStyles.textSeeAll}>See all</Text>
+          </TouchableOpacity>
+        </View>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
+          {props.recommendation.map((playlist: any) => (
+            <TouchableOpacity
+              key={playlist.encodeId||playlist.id}
+              onPress={() => props.handlePlay(playlist,"recommend")}
+            >
+              <View style={homeStyles.card}>
+                <Image
+                  source={{ uri: playlist.thumbnailM }}
+                  style={homeStyles.cardImage}
+                />
+                <Text style={homeStyles.cardTitle} numberOfLines={1}>
+                  {playlist.title}
+                </Text>
+              </View>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </>
+    )}
     {/* New Release */}
     {props.newReleaseSongs?.length > 0 && (
       <>
@@ -48,7 +83,7 @@ const HomeComponents = (props: any) => (
           {props.newReleaseSongs.map((playlist: any) => (
             <TouchableOpacity
               key={playlist.encodeId}
-              onPress={() => props.handlePlay(playlist)}
+              onPress={() => props.handlePlay(playlist,"new-release")}
             >
               <View style={homeStyles.card}>
                 <Image

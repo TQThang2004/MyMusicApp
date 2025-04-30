@@ -56,9 +56,10 @@ const SongDetailScreen = ({ navigation, route }: any) => {
         await FavoriteService.addFavorite({
           userId: user.id,
           songId: currentSong.encodeId,
-          name: currentSong.title,
+          title: currentSong.title,
           thumbnailM: currentSong.thumbnailM,
-          genreIds: currentSong.genreIds
+          genreIds: currentSong.genreIds,
+          artist: currentSong.artistsNames
         });
       } else {
         await FavoriteService.removeFavorite({
@@ -134,11 +135,11 @@ const SongDetailScreen = ({ navigation, route }: any) => {
         // Update the current song details based on track
         setCurrentSong({
           encodeId: trackObject.id,
-          title: trackObject.title,
+          title: trackObject.title|| trackObject.name,
           artistsNames: trackObject.artist,
           thumbnailM: trackObject.thumbnailM,
           url: trackObject.url,
-          genreIds: songData.genreIds
+          genreIds: songData?.genreIds
         });
         console.log('Updated currentSong:', trackObject);
       } else {
@@ -172,7 +173,8 @@ const SongDetailScreen = ({ navigation, route }: any) => {
               selectedItem.id,
               selectedItem.title || 'Unknown Title',
               selectedItem.thumbnailM,
-              selectedItem.genreIds
+              selectedItem.genresIds,
+              selectedItem.artist
             ).catch(error => console.error('Failed to add to history:', error));
           }
       }
@@ -220,9 +222,19 @@ const SongDetailScreen = ({ navigation, route }: any) => {
           <View style={styles.songInfo}>
             <Text style={styles.songTitle}>{currentSong.title}</Text>
             <Text style={styles.artist}>
-              {Array.isArray(currentSong.artists)
-                ? currentSong.artists.join(', ')
-                : currentSong.artistsNames || 'Unknown'}
+            {(() => {
+              if (Array.isArray(currentSong.artists)) {
+                return currentSong.artists.join(', ');
+              } else if (currentSong.artistsNames) {
+                return currentSong.artistsNames;
+              } else if (currentSong.artist) {
+                return currentSong.artist;
+              } else if (currentSong.name) {
+                return currentSong.artist;
+              } else {
+                return 'Unknown';
+              }
+            })()}
             </Text> 
           </View>
 

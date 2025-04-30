@@ -71,6 +71,37 @@ export const HomeService = {
       return null;
     }
   },
+  async fetchRecommendation(userId: string) {
+    if (!userId) {
+      console.error('Invalid userId in fetchRecommendation');
+      return null;
+    }
+    try {
+      const response = await fetch(`${appInfo.BASE_URL}/song/recommendations?userId=${userId}`);
+      const contentType = response.headers.get('content-type');
+
+      if (!response.ok) {
+        const text = await response.text();
+        console.error('Lỗi từ server:', text);
+        return null;
+      }
+
+      if (!contentType?.includes('application/json')) {
+        const text = await response.text();
+        console.error('Server không trả về JSON:', text);
+        return null;
+      }
+
+      const data = await response.json();
+
+      console.log('server réponew:', response);
+      console.log('data:', data.recommendations);
+      return data.recommendations;
+    } catch (error) {
+      console.error('Error fetching song details:', error);
+      return null;
+    }
+  },
   async fetchInfoSongDetails(encodeId: string) {
     if (!encodeId) {
       console.error('Invalid encodeId');

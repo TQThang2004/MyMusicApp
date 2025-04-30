@@ -29,9 +29,10 @@ export const FavoriteService = {
     }
   },
 
-  async addFavorite({ userId, songId, name, thumbnailM, genreIds }: { userId: string; songId: string; name: string; thumbnailM: string;genreIds: string }) {
+  async addFavorite({ userId, songId, title, thumbnailM, genreIds, artist }: 
+                    { userId: string; songId: string; title: string; thumbnailM: string;genreIds: string ;artist:string}) {
     try {
-      console.log('Adding to favorite:', { userId, songId, name, thumbnailM , genreIds});  
+      console.log('Adding to favorite:', { userId, songId, title, thumbnailM , genreIds,artist});  
       if (!thumbnailM) {
         throw new Error("thumbnailM is missing or undefined.");
       }
@@ -41,7 +42,7 @@ export const FavoriteService = {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ userId, songId, name, thumbnailM, genreIds }),
+        body: JSON.stringify({ userId, songId, title, thumbnailM, genreIds,artist }),
       });
       console.log('Song Detail Response:', response);
       if (!response.ok) {
