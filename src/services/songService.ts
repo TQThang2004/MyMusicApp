@@ -1,9 +1,7 @@
 // services/homeServices.ts
 import { db } from '../../config/firebaseConfig';
+import appInfo from '../constants/appInfo';
 
-// const IP = '10.0.2.2';
-const IP = '192.168.2.5';
-const PORT = '5000';
 
 export const SongService = {
 
@@ -19,7 +17,7 @@ export const SongService = {
     }) {
         try {
         const endpoint = isFavorite ? 'favorite/song/remove' : 'favorite/song/add';
-        const response = await fetch(`http://${IP}:${PORT}/api/${endpoint}`, {
+        const response = await fetch(`${appInfo.BASE_URL}/${endpoint}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId, songId}),

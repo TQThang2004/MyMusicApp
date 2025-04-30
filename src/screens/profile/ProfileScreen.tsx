@@ -10,6 +10,8 @@ import { AuthContext } from '../../context/AuthContext';
 
 export default function ProfileScreen(navigation: any) {
 
+  {}
+
 
 const handleLogout = async () => {
   try {
@@ -27,6 +29,7 @@ const handleLogout = async () => {
     <ScrollView style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.title}>Cá nhân</Text>
+        <Text style={styles.title}>{user.avatar}</Text>
         <View style={styles.icons}>
         <Icon name="notifications-none" size={24} color="#000" style={styles.icon} />
           <Icon name="settings" size={24} color="#000" style={styles.icon} />
@@ -34,8 +37,12 @@ const handleLogout = async () => {
       </View>
 
       <View style={styles.profile}>
-        <Image
-          source={{ uri: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8S3I6KP510EXnPjyEhheLidDuiLGXakMu5g&s' }}
+      <Image
+          source={{
+            uri: user?.photo
+              ? user.photo
+              : 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR8S3I6KP510EXnPjyEhheLidDuiLGXakMu5g&s',
+          }}
           style={styles.avatar}
         />
         <View>
@@ -75,6 +82,10 @@ const handleLogout = async () => {
 
         </View>
       </TouchableHighlight >
+
+      <TouchableOpacity style={styles.logoutButton} onPress={logout}>
+        <Text style={styles.logoutText}>Đăng xuất</Text>
+      </TouchableOpacity>
     </ScrollView>
     <FloatingPlayer
                 onPress={() =>
@@ -127,6 +138,20 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '300',
     marginLeft: 8,
+  },
+  logoutButton: {
+    marginTop: 30,
+    marginBottom: 50,
+    marginHorizontal: 16,
+    paddingVertical: 12,
+    backgroundColor: '#ff3b30',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  logoutText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: 'bold',
   },
   
 });

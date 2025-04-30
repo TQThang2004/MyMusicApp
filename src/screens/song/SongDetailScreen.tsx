@@ -13,6 +13,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 import LyricsScreen from './LyricScreen';
 import { Dimensions } from 'react-native';
 import { HistoryService } from '../../services/historyService';
+import { HomeService } from '../../services/homeServices';
 
 
 const SongDetailScreen = ({ navigation, route }: any) => {
@@ -123,9 +124,12 @@ const SongDetailScreen = ({ navigation, route }: any) => {
       }
   
       const trackObject = await TrackPlayer.getTrack(trackIndex);
+      
   
       if (trackObject) {
         console.log("Title trackObject:",trackObject);
+        const songData = await HomeService.fetchInfoSongDetails(trackObject.id)
+        console.log("songData", songData)
         
         // Update the current song details based on track
         setCurrentSong({
@@ -133,7 +137,8 @@ const SongDetailScreen = ({ navigation, route }: any) => {
           title: trackObject.title,
           artistsNames: trackObject.artist,
           thumbnailM: trackObject.thumbnailM,
-          url: trackObject.url
+          url: trackObject.url,
+          genreIds: songData.genreIds
         });
         console.log('Updated currentSong:', trackObject);
       } else {
@@ -171,6 +176,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
             ).catch(error => console.error('Failed to add to history:', error));
           }
       }
+      setupPlayer()
         
     });
   

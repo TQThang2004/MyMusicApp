@@ -1,16 +1,15 @@
-// const IP = '10.0.2.2';
-const IP = '192.168.2.5';
-const PORT = '5000';
+import appInfo from "../constants/appInfo";
+
 
 
 export const HistoryService = {
 
-    async addSongToHistory (userId: string, songId: string, name: string, thumbnailM: string)  {
+    async addSongToHistory (userId: string, songId: string, name: string, thumbnailM: string, genreIds?: any)  {
       console.log("addSongToHistory +1")
-        await fetch(`http://${IP}:${PORT}/api/song/history`, {
+        await fetch(`${appInfo.BASE_URL}/song/history`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ userId, songId, name, thumbnailM }),
+          body: JSON.stringify({ userId, songId, name, thumbnailM, genreIds }),
         });
         console.log("addSongToHistory successful")
       }

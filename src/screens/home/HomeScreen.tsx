@@ -6,7 +6,6 @@ import SongBottomSheet, { SongBottomSheetRef } from '../../components/SongBottom
 import { HomeService } from '../../services/homeServices';
 import FloatingPlayer from '../../components/FloatPlayer';
 import { AuthContext } from '../../context/AuthContext';
-import { HistoryService } from '../../services/historyService';
 
 
 const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
@@ -70,8 +69,6 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
       newReleaseSongs.map(async (item: any) => {
         const songData = await HomeService.fetchSongDetails(item.encodeId);
         const songData2 = await HomeService.fetchInfoSongDetails(item.encodeId);
-        console.log('songData:', songData);
-        console.log('songData2:', songData2);
         
         if (!songData) return null;
 
@@ -81,7 +78,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
           title: item.title,
           artist: item.artistsNames || 'Unknown',
           thumbnailM: item.thumbnailM,
-          genresIds: songData.genreIds
+          genresIds: songData2.genreIds
         };
       })
     );

@@ -36,7 +36,7 @@ const MyPlaylistScreen = ({navigation}:any) => {
   const fetchPlaylists = async () => {
     try {
       console.log('Fetching playlists for user ID:', user.id);
-      const response = await fetch(`http://192.168.2.5:5000/api/main/get-playlist/${user.id}`);
+      const response = await fetch(`http://192.168.2.16:5000/api/main/get-playlist/${user.id}`);
       const data = await response.json();
       console.log('Playlist data:', data);
       setPlaylists(data.playlist.result);

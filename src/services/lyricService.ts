@@ -1,8 +1,5 @@
-// services/homeServices.ts
+import appInfo from "../constants/appInfo";
 
-// const IP = '10.0.2.2';
-const IP = '192.168.2.5';
-const PORT = '5000';
 
 export const LyricService = {
 
@@ -15,7 +12,7 @@ export const LyricService = {
     
         try {
           console.log('Fetching lyric for ID:', encodeID);
-          const response = await fetch(`http://${IP}:${PORT}/api/lyric?encodeId=${encodeID}`);
+          const response = await fetch(`${appInfo.BASE_URL}/lyric?encodeId=${encodeID}`);
           if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
           }

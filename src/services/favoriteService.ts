@@ -1,6 +1,5 @@
-// const IP = '10.0.2.2';
-const IP = '192.168.2.5';
-const PORT = '5000';
+import appInfo from "../constants/appInfo";
+
 
 interface IsFavoriteParams {
   userId: string;
@@ -12,7 +11,7 @@ export const FavoriteService = {
   async isFavorite({ userId, songId }: IsFavoriteParams) {
     try {
       console.log("UserID:",userId,"songID",songId)
-      const url = `http://${IP}:${PORT}/api/song/favorite/isFavorite?userId=${userId}&songId=${songId}`;
+      const url = `${appInfo.BASE_URL}/song/favorite/isFavorite?userId=${userId}&songId=${songId}`;
       const response = await fetch(url);
 
       const textResponse = await response.text();
@@ -32,12 +31,12 @@ export const FavoriteService = {
 
   async addFavorite({ userId, songId, name, thumbnailM, genreIds }: { userId: string; songId: string; name: string; thumbnailM: string;genreIds: string }) {
     try {
-      console.log('Adding to favorite:', { userId, songId, name, thumbnailM });  
+      console.log('Adding to favorite:', { userId, songId, name, thumbnailM , genreIds});  
       if (!thumbnailM) {
         throw new Error("thumbnailM is missing or undefined.");
       }
 
-      const response = await fetch(`http://${IP}:${PORT}/api/song/favorite/add`, {
+      const response = await fetch(`${appInfo.BASE_URL}/song/favorite/add`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -67,7 +66,7 @@ export const FavoriteService = {
 
   async removeFavorite({ userId, songId }: { userId: string; songId: string }) {
     try {
-      const response = await fetch(`http://${IP}:${PORT}/api/song/favorite/remove`, {
+      const response = await fetch(`${appInfo.BASE_URL}/song/favorite/remove`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

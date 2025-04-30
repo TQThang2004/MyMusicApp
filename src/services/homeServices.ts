@@ -1,9 +1,10 @@
 // services/homeServices.ts
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
+import appInfo from '../constants/appInfo';
 
 // const IP = '10.0.2.2';
-const IP = '192.168.2.5';
+const IP = '192.168.2.16';
 
 const PORT = '5000';
 
@@ -46,7 +47,7 @@ export const HomeService = {
 
   async fetchHomeData() {
     try {
-      const response = await fetch(`http://${IP}:${PORT}/api/home`);
+      const response = await fetch(`${appInfo.BASE_URL}/home`);
       const json = await response.json();
       console.log('fecth Home Data', json.data);
       return json.data?.items || [];
@@ -62,7 +63,7 @@ export const HomeService = {
       return null;
     }
     try {
-      const response = await fetch(`http://${IP}:${PORT}/api/song?encodeId=${encodeId}`);
+      const response = await fetch(`${appInfo.BASE_URL}/song?encodeId=${encodeId}`);
       const data = await response.json();
       return data.data;
     } catch (error) {
@@ -76,7 +77,7 @@ export const HomeService = {
       return null;
     }
     try {
-      const response = await fetch(`http://${IP}:${PORT}/api/infosong?encodeId=${encodeId}`);
+      const response = await fetch(`${appInfo.BASE_URL}/infosong?encodeId=${encodeId}`);
       const data = await response.json();
       return data.data;
     } catch (error) {
@@ -93,7 +94,7 @@ export const HomeService = {
     try {
       console.log('Fetching playlist with encodeId:', encodeId);
      
-      const response = await fetch(`http://${IP}:${PORT}/api/detailplaylist?playlistId=${encodeId}`);
+      const response = await fetch(`${appInfo.BASE_URL}/detailplaylist?playlistId=${encodeId}`);
       console.log("Response raw:", response);
       const data = await response.json();
       console.log("JSON data:", data);

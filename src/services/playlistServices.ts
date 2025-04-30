@@ -1,9 +1,10 @@
 // services/homeServices.ts
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../config/firebaseConfig';
+import appInfo from '../constants/appInfo';
 
 // const IP = '10.0.2.2';
-const IP = '192.168.2.5';
+const IP = '192.168.2.16';
 const PORT = '5000';
 
 export const PlaylistService = {
@@ -17,7 +18,7 @@ export const PlaylistService = {
 
     try {
       console.log('Fetching playlist details for ID:', playlistId);
-      const response = await fetch(`http://${IP}:${PORT}/api/detailplaylist?playlistId=${playlistId}`);
+      const response = await fetch(`${appInfo.BASE_URL}/detailplaylist?playlistId=${playlistId}`);
       console.log('Responsesssssssssssss status:', response);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -37,7 +38,7 @@ export const PlaylistService = {
       throw new Error("Vui lòng nhập tên playlist");
     }
   
-    const response = await fetch(`http://${IP}:${PORT}/api/main/create-playlist`, {
+    const response = await fetch(`${appInfo.BASE_URL}/main/create-playlist`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
