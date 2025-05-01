@@ -67,7 +67,47 @@ const MyPlaylistScreen = ({navigation}:any) => {
     }
   };
 
-
+  const handleRemoveSong = (playlistId: string) => {
+    Alert.alert(
+      'Xóa Playlist',
+      'Bạn có chắc muốn xóa Playlist không?',
+      [
+        {
+          text: 'Hủy',
+          style: 'cancel',
+        },
+        {
+          text: 'Xóa',
+          style: 'destructive',
+          onPress: async () => {
+            try {
+              const response = await fetch(`${appInfo.BASE_URL}/main/remove-playlist`, {
+                method: 'DELETE',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  userId: user.id,
+                  playlistId: playlistId
+                }),
+              });
+  
+              const data = await response.json();
+              console.log('Xóa playlist:', data);
+              if (data) {
+                setPlaylists(prev => prev.filter(playlist => playlist.id !== playlistId));
+              } else {
+                console.log('Xóa thất bại:', data.message);
+              }
+            } catch (error) {
+              console.error('Lỗi khi xóa playlist:', error);
+            }
+          },
+        },
+      ]
+    );
+  };
+  
 
   return (
     <View style={styles.container}>
@@ -89,14 +129,16 @@ const MyPlaylistScreen = ({navigation}:any) => {
             imageUrl={item.thumbnail}
             songName={item.name}
             artistName={user.username}
-            isButton
-            icon={<Icon name="dots-three-horizontal" size={20} color="#555" />}
+            onLongPress={() => handleRemoveSong(item.id)}
             onPress={() => {
-              navigation.navigate('OnePlaylist', {
-                encodeId: item.id,
-                playlistName: item.name,
-                thumbnail: item.thumbnail,
-                creatorName: user.username
+              console.log('Playlist item pressed:', item.id);
+              navigation.navigate('OneMyPlaylist', {
+                playlist: {
+                  encodeId: item.id,
+                  thumbnailM: item.thumbnail,
+                  title: item.name,
+                  artistsNames: user.username
+                }
               });
             }}
           />

@@ -12,13 +12,14 @@ interface Props {
   icon?: ReactNode
   onPress?: () => void;
   onPressButton?: () => void;
+  onLongPress?: () => void;
 }
 
 const SongItemComponent = (props: Props) => {
-  const { imageUrl, songName, artistName, isButton, icon, onPress, onPressButton } = props;
+  const { imageUrl, songName, artistName, isButton, icon, onPress, onPressButton, onLongPress } = props;
 
   return (
-    <TouchableOpacity onPress={onPress} style={styles.container}>
+    <TouchableOpacity onPress={onPress} onLongPress={onLongPress} style={styles.container}>
       <RowComponent>
           <Image source={{ uri: imageUrl }} style={styles.image} />
     

@@ -1,4 +1,4 @@
-import React, { use, useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import {
   Animated,
   View,
@@ -6,6 +6,7 @@ import {
   Dimensions,
   StatusBar,
   Alert,
+  TouchableOpacity,
 } from 'react-native';
 import { ButtonComponent, RowComponent, SongItemComponent, TextComponent } from '../../components';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -23,75 +24,79 @@ const HEADER_MIN_HEIGHT = screenHeight * 0.3;
 const HEADER_SCROLL_DISTANCE = HEADER_MAX_HEIGHT - HEADER_MIN_HEIGHT;
 
 
-const OnePlaylistScreen = ({route, navigation}:any) => {
+const OnePlaylistScreen = ({ route, navigation }: any) => {
 
-  const {user} = useContext(AuthContext)
+  const { user } = useContext(AuthContext)
 
-  const [list, setList] = useState<{ thumbnailM: string;encodeId:string, title: string; artistsNames: string }[]>([]);
+  const [list, setList] = useState<{ thumbnailM: string; encodeId: string, title: string; artistsNames: string }[]>([]);
 
   const { playlist } = route.params;
-  console.log('Playlist:', playlist);
-  console.log('encodeId Playlist', playlist.encodeId);
-  
+
   useEffect(() => {
-    console.log('Playlist ID:', playlist.encodeId);
-    const fetchPlaylistDetails = async () => { 
+    if (!playlist?.encodeId) {
+      console.error('No playlist ID provided');
+      return;
+    }
+
+    const fetchPlaylistDetails = async () => {
       try {
         const playlistObj = await PlaylistService.fetchDetailPlaylist(playlist.encodeId);
-        console.log('Playlist details:', playlistObj.data.song.items);
-        setList(playlistObj.data.song.items);
+        if (playlistObj?.data?.song?.items) {
+          setList(playlistObj.data.song.items);
+        }
       } catch (error) {
         console.error('Error fetching playlist details:', error);
-      }  
-     }
-     fetchPlaylistDetails();
-    },[]);
-
-
-    const handlePlay = async (selectedItem: any, list: { thumbnailM: string; encodeId: string; title: string; artistsNames: string; }[], navigation: any) => {
-
-      const fullList = list;
-    
-      await TrackPlayer.reset();
-    
-      const tracks = await Promise.all(
-        fullList.map(async (item: any) => {
-          const songData = await HomeService.fetchSongDetails(item.encodeId);
-          if (!songData) return null;
-    
-          return {
-            id: item.encodeId,
-            url: songData['128'] || songData['320'] || songData['256'],
-            title: item.title,
-            artist: item.artistsNames || 'Unknown',
-            thumbnailM: item.thumbnailM ||item.thumbnail,
-          };
-        })
-      );
-    
-      const filteredTracks = tracks.filter((track) => track !== null);
-    
-      await TrackPlayer.add(filteredTracks);
-    
-      const index = filteredTracks.findIndex((track: any) => track.id === selectedItem.encodeId);
-    
-      if (index >= 0) {
-        await TrackPlayer.skip(index);
+        Alert.alert('Error', 'Could not load playlist details');
       }
-    
-      await TrackPlayer.play();
-    
-      console.log('Playing song:', selectedItem.title);
-      navigation.navigate('Song', { song: selectedItem });
+    }
+    fetchPlaylistDetails();
+  }, [playlist?.encodeId]);
 
 
-      HistoryService.addSongToHistory(
-            user.id,
-            selectedItem.encodeId,
-            selectedItem.title,
-            selectedItem.thumbnailM
-          ).catch(error => console.error('Failed to add to history:', error));
-    };
+  const handlePlay = async (selectedItem: any, list: { thumbnailM: string; encodeId: string; title: string; artistsNames: string; }[], navigation: any) => {
+
+    const fullList = list;
+
+    await TrackPlayer.reset();
+
+    const tracks = await Promise.all(
+      fullList.map(async (item: any) => {
+        const songData = await HomeService.fetchSongDetails(item.encodeId);
+        if (!songData) return null;
+
+        return {
+          id: item.encodeId,
+          url: songData['128'] || songData['320'] || songData['256'],
+          title: item.title,
+          artist: item.artistsNames || 'Unknown',
+          thumbnailM: item.thumbnailM || item.thumbnail,
+        };
+      })
+    );
+
+    const filteredTracks = tracks.filter((track) => track !== null);
+
+    await TrackPlayer.add(filteredTracks);
+
+    const index = filteredTracks.findIndex((track: any) => track.id === selectedItem.encodeId);
+
+    if (index >= 0) {
+      await TrackPlayer.skip(index);
+    }
+
+    await TrackPlayer.play();
+
+    console.log('Playing song:', selectedItem.title);
+    navigation.navigate('Song', { song: selectedItem });
+
+
+    HistoryService.addSongToHistory(
+      user.id,
+      selectedItem.encodeId,
+      selectedItem.title,
+      selectedItem.thumbnailM
+    ).catch(error => console.error('Failed to add to history:', error));
+  };
 
 
 
@@ -132,7 +137,7 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
         ]}
       >
         <Animated.Image
-          source={{uri: playlist.thumbnailM || playlist.thumbnail}}
+          source={{ uri: playlist.thumbnailM || playlist.thumbnail }}
 
           style={[
             styles.backgroundImage,
@@ -163,7 +168,7 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
         style={{ paddingHorizontal: 20, paddingVertical: 10 }}
       >
 
-    <TextComponent text={`${list.length} songs`} styles={{ textAlign: 'center',color:'black' }} />
+        <TextComponent text={`${list.length} songs`} styles={{ textAlign: 'center', color: 'black' }} />
 
         {list.map(song => (
           <SongItemComponent
@@ -178,23 +183,23 @@ const OnePlaylistScreen = ({route, navigation}:any) => {
         ))}
 
       </Animated.ScrollView>
-      {/* <TouchableOpacity
+      <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => {
           console.log('Thêm bài hát được nhấn');
         }}
       >
         <Icon name="plus" size={24} color="#fff" />
-      </TouchableOpacity> */}
+      </TouchableOpacity>
 
-      <FloatingPlayer 
-                onPress={() =>
-                navigation.navigate('Song', { song: TrackPlayer.getCurrentTrack })
-            }
-            style={{ bottom: 0 }}
-          /> 
+      <FloatingPlayer
+        onPress={() =>
+          navigation.navigate('Song', { song: TrackPlayer.getCurrentTrack })
+        }
+        style={{ bottom: 0 }}
+      />
 
-          
+
     </View>
   );
 };
@@ -231,8 +236,8 @@ const styles = StyleSheet.create({
   },
   floatingButton: {
     position: 'absolute',
-    bottom: 30,
-    right: 20,
+    bottom: 70,
+    right: 30,
     backgroundColor: '#92c0e8',
     width: 50,
     height: 50,
