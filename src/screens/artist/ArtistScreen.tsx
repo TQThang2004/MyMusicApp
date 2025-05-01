@@ -1,59 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
   Image,
   TouchableOpacity,
   FlatList,
+  Alert,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import artistStyles from './ArtistStyle';
+import { PlaylistService } from '../../services/playlistServices';
 
 const ArtistScreen = ({ route, navigation }: any) => {
     console.log('ArtistScreen', route.params);
     const { artist } = route?.params || {};
-    // Nếu muốn tránh lỗi hoàn toàn:
+    const [playlist, setPlaylist] = useState()
+
+
     if (!artist) return <Text>No artist selected</Text>;
 
-  const topSongs = [
-    {
-      id: '1',
-      title: 'Pehla Pyaar',
-      subtitle: 'Kabir Singh',
-      image: require('../../assets/images/ojos_tristes.png'),
-    },
-    {
-      id: '2',
-      title: 'Jab Tak',
-      subtitle: 'M.S Dhoni: The Untold Story',
-      image: require('../../assets/images/ojos_tristes.png'),
-    },
-    {
-      id: '3',
-      title: 'Bol Do Na Zara',
-      subtitle: 'Azhar',
-      image: require('../../assets/images/ojos_tristes.png'),
-    },
-    {
-      id: '4',
-      title: 'Main Rahoon Ya Na Rahoon',
-      subtitle: 'Main Rahoon Ya Na Rahoon',
-      image: require('../../assets/images/ojos_tristes.png'),
-    },
-    {
-      id: '5',
-      title: 'Sab Tera',
-      subtitle: 'Baaghi',
-      image: require('../../assets/images/ojos_tristes.png'),
-    },
-  ];
+    useEffect(() => {
+  
+        const fetchPlaylistDetails = async () => {
+          try {
+            const data = await PlaylistService.fetchDetailPlaylist(artist.playlistId);
+            console.log("-----------",data.data.song.items)
+            setPlaylist(data.data.song.items)
+          } catch (error) {
+            console.error('Error fetching playlist details:', error);
+            Alert.alert('Error', 'Could not load playlist details');
+          }
+        }
+        fetchPlaylistDetails();
+      }, []);
+
 
   const renderSong = ({ item }: any) => (
     <View style={artistStyles.songItem}>
-      <Image source={item.image} style={artistStyles.songImage} />
+      <Image source={{ uri: item.thumbnailM }} style={artistStyles.songImage} />
+
       <View style={artistStyles.songInfo}>
         <Text style={artistStyles.songTitle}>{item.title}</Text>
-        <Text style={artistStyles.songSubtitle}>{item.subtitle}</Text>
+        <Text style={artistStyles.songSubtitle}>{item.artistsNames}</Text>
       </View>
       <Ionicons name="ellipsis-vertical" size={20} color="#555" />
     </View>
@@ -88,7 +76,7 @@ const ArtistScreen = ({ route, navigation }: any) => {
       </View>
 
       <FlatList
-        data={topSongs}
+        data={playlist}
         keyExtractor={item => item.id}
         renderItem={renderSong}
         contentContainerStyle={{ paddingBottom: 20 }}
