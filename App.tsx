@@ -4,7 +4,7 @@ import { StatusBar } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import MainNavigator from './src/navigators/MainNavigator';
-import TrackPlayer from 'react-native-track-player';
+import TrackPlayer, { Capability } from 'react-native-track-player';
 import auth from '@react-native-firebase/auth';
 import AuthNavigator from './src/navigators/AuthNavigator';
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
@@ -35,6 +35,19 @@ const AppContent = () => {
     const setup = async () => {
       try {
         await TrackPlayer.setupPlayer();
+        TrackPlayer.updateOptions({
+          // Media controls capabilities
+          capabilities: [
+              Capability.Play,
+              Capability.Pause,
+              Capability.SkipToNext,
+              Capability.SkipToPrevious,
+              Capability.Stop,
+          ],
+      
+          compactCapabilities: [Capability.Play, Capability.Pause],
+               
+      });
       } catch (err) {
         console.log("TrackPlayer setup error:", err);
       }

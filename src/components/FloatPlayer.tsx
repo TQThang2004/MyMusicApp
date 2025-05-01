@@ -49,7 +49,7 @@ const FloatingPlayer = ({ onPress, style }: FloatingPlayerProps) => {
       <Image source={{ uri: track.thumbnailM }} style={styles.image} />
       <View style={styles.textContainer}>
         <Text numberOfLines={1} style={styles.title}>{track.title}</Text>
-        <Text numberOfLines={1} style={styles.artist}>{track.artist}</Text>
+        <Text numberOfLines={1} style={styles.artist}>{}</Text>
       </View>
       <View style={styles.controls}>
         <TouchableOpacity onPress={togglePlayback}>

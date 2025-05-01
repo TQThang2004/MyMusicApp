@@ -95,7 +95,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
           id: item.encodeId||item.id,
           url: songData['128'] || songData['320'] || songData['256'],
           title: item.title,
-          artist: item.artistsNames || 'Unknown',
+          artist: item.artistsNames || songData.artistsNames || 'Unknown',
           thumbnailM: item.thumbnailM,
           genresIds: songData2.genreIds
         };
@@ -114,16 +114,12 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
   
     await TrackPlayer.play();
   
-    console.log('Playing song:', selectedItem.title);
+    console.log('Playing song:', selectedItem);
     navigation.navigate('Song', { song: selectedItem });
 
     HistoryService.addSongToHistory(
                   user.id,
-                  selectedItem.id,
-                  selectedItem.title || 'Unknown Title',
-                  selectedItem.thumbnailM,
-                  selectedItem.genresIds,
-                  selectedItem.artist||selectedItem.artistsNames||selectedItem.artists
+                  selectedItem.encodeId,
                 ).catch(error => console.error('Failed to add to history:', error));
   };
 

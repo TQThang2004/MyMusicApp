@@ -1,16 +1,15 @@
 import appInfo from "../constants/appInfo";
 
 
-interface IsFavoriteParams {
+interface FavoriteParams {
   userId: string;
   songId: string;
 }
 
 export const FavoriteService = {
 
-  async isFavorite({ userId, songId }: IsFavoriteParams) {
+  async isFavorite({ userId, songId }: FavoriteParams) {
     try {
-      console.log("UserID:",userId,"songID",songId)
       const url = `${appInfo.BASE_URL}/song/favorite/isFavorite?userId=${userId}&songId=${songId}`;
       const response = await fetch(url);
 
@@ -19,6 +18,25 @@ export const FavoriteService = {
 
       if (!response.ok) {
         throw new Error(textResponse || 'Check favorite failed');
+      }
+
+      const data = JSON.parse(textResponse);
+      return data.isFavorite;
+    } catch (error) {
+      console.error('Error checking favorite:', error);
+      throw error;
+    }
+  },
+  async getAllFavorite({ userId}: any) {
+    try {
+      const url = `${appInfo.BASE_URL}/song/favorite/getAll?userId=${userId}`;
+      const response = await fetch(url);
+
+      const textResponse = await response.text();
+      console.log('Response Text:', textResponse);
+
+      if (!response.ok) {
+        throw new Error(textResponse || 'Get ALL favorite failed');
       }
 
       const data = JSON.parse(textResponse);

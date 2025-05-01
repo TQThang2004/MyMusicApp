@@ -8,7 +8,7 @@ import auth from '@react-native-firebase/auth';
 import { AuthContext } from '../../context/AuthContext';
 
 
-export default function ProfileScreen(navigation: any) {
+export default function ProfileScreen({navigation}: any) {
 
   const [showModal, setShowModal] = useState(false);
 
@@ -82,7 +82,7 @@ const handleLogout = async () => {
       <TouchableHighlight  
         
         underlayColor="gray"
-        onPress={() => navigation.navigate('Song')}
+        onPress={() => navigation.navigate('FavoritePlaylist')}
       >
         <View style={styles.openSongButton}>
           <AntDesign name="staro" size={20} color="black" />

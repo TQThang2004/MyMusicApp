@@ -129,14 +129,14 @@ const SongDetailScreen = ({ navigation, route }: any) => {
   
       if (trackObject) {
         console.log("Title trackObject:",trackObject);
-        const songData = await HomeService.fetchInfoSongDetails(trackObject.id)
+        const songData = await HomeService.fetchInfoSongDetails(trackObject.id||trackObject.encodeId)
         console.log("songData", songData)
         
         // Update the current song details based on track
         setCurrentSong({
           encodeId: trackObject.id,
           title: trackObject.title|| trackObject.name,
-          artistsNames: trackObject.artist,
+          artistsNames: songData.artistsNames|| "unknow" ,
           thumbnailM: trackObject.thumbnailM,
           url: trackObject.url,
           genreIds: songData?.genreIds
@@ -171,10 +171,6 @@ const SongDetailScreen = ({ navigation, route }: any) => {
             HistoryService.addSongToHistory(
               user.id,
               selectedItem.id,
-              selectedItem.title || 'Unknown Title',
-              selectedItem.thumbnailM,
-              selectedItem.genresIds,
-              selectedItem.artist
             ).catch(error => console.error('Failed to add to history:', error));
           }
       }

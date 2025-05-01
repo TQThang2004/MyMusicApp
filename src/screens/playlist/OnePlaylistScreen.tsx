@@ -93,8 +93,6 @@ const OnePlaylistScreen = ({ route, navigation }: any) => {
     HistoryService.addSongToHistory(
       user.id,
       selectedItem.encodeId,
-      selectedItem.title,
-      selectedItem.thumbnailM
     ).catch(error => console.error('Failed to add to history:', error));
   };
 

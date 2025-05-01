@@ -38,7 +38,7 @@ const HomeComponents = (props: any) => (
               {
                 console.log("Props: -------",props)
                 props.navigation.navigate('PopularSong', { popularSongs: props.recommendation }) 
-                console.log("PopularSong: -------",props.recommendation)
+                console.log("recommedn: -------",props.recommendation)
               }
               }>
             <Text style={homeStyles.textSeeAll}>See all</Text>
@@ -47,7 +47,7 @@ const HomeComponents = (props: any) => (
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
           {props.recommendation.map((playlist: any) => (
             <TouchableOpacity
-              key={playlist.encodeId||playlist.id}
+              key={playlist.encodeId}
               onPress={() => props.handlePlay(playlist,"recommend")}
             >
               <View style={homeStyles.card}>
@@ -56,7 +56,7 @@ const HomeComponents = (props: any) => (
                   style={homeStyles.cardImage}
                 />
                 <Text style={homeStyles.cardTitle} numberOfLines={1}>
-                  {playlist.title}
+                  {playlist.name||playlist.title}
                 </Text>
               </View>
             </TouchableOpacity>

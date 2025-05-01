@@ -58,7 +58,7 @@ const AddSongScreen = ({ route, navigation }: any) => {
   };
 
   const handleSearch = async () => {
-    Keyboard.dismiss(); // Dismiss keyboard when searching
+    Keyboard.dismiss();
 
     if (!query.trim()) {
       // If search is empty, fetch default data
