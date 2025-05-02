@@ -181,14 +181,14 @@ const OnePlaylistScreen = ({ route, navigation }: any) => {
         ))}
 
       </Animated.ScrollView>
-      <TouchableOpacity
+      {/* <TouchableOpacity
         style={styles.floatingButton}
         onPress={() => {
           console.log('Thêm bài hát được nhấn');
         }}
       >
         <Icon name="plus" size={24} color="#fff" />
-      </TouchableOpacity>
+      </TouchableOpacity> */}
 
       <FloatingPlayer
         onPress={() =>

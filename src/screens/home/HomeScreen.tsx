@@ -95,9 +95,10 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
           id: item.encodeId||item.id,
           url: songData['128'] || songData['320'] || songData['256'],
           title: item.title,
-          artist: item.artistsNames || songData.artistsNames || 'Unknown',
+          artist: item.artistsNames || songData.artistsNames || '',
           thumbnailM: item.thumbnailM,
-          genresIds: songData2.genreIds
+          genresIds: songData2.genreIds,
+          duration: songData2.duration
         };
       })
     );

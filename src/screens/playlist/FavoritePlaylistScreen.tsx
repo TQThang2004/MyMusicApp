@@ -6,6 +6,7 @@ import TrackPlayer from 'react-native-track-player';
 import { HomeService } from '../../services/homeServices';
 import { FavoriteService } from '../../services/favoriteService';
 import { AuthContext } from '../../context/AuthContext';
+import { handlePlay } from '../../services/handlePlay';
 
 const FavoritePlaylistScreen = ({ navigation}: any) => {
 
@@ -15,36 +16,17 @@ const FavoritePlaylistScreen = ({ navigation}: any) => {
   useEffect(() => {
       const loadHomeData = async () => {
         const data = await FavoriteService.getAllFavorite(user.id);
-
+        setFavoriteSongs(data)
         console.log('sections favorite', data);
         
       };
       loadHomeData();
     }, []);
 
-   // Player logic
-   const handlePlay = async (item: any) => {
-    const songData = await HomeService.fetchSongDetails(item.encodeId);
-    if (!songData) return;
-
-    console.log('songData', songData);
-
-    await TrackPlayer.reset();
-    await TrackPlayer.add({
-      id: item.id,
-      url: songData['128'] || songData['320'] || songData['256'],
-      title: item.title,
-      artist: item.artist || 'Unknown',
-      artwork: item.thumbnailM,
-    });
-    await TrackPlayer.play();
-    console.log('Playing song:', item.title);
-    navigation.navigate('Song', { song: item });
-  };
 
   const renderItem = ({ item }: any) => (
     console.log("item",item),
-    <TouchableOpacity style={styles.item} key={item.id} onPress={() => handlePlay(item)}>
+    <TouchableOpacity style={styles.item} key={item.encodeId} onPress={() => handlePlay(item, favoriteSongs,navigation)}>
    
       <View style={{ flexDirection: 'row', alignItems: 'center', flex: 1 }}>
         <Image source={{ uri: item.image || item.thumbnailM }} style={styles.image} />
@@ -61,7 +43,7 @@ const FavoritePlaylistScreen = ({ navigation}: any) => {
             numberOfLines={1}
             ellipsizeMode="tail"
           >
-            {item.artistsNames || 'Unknown'}
+            {item.artist || 'Unknown'}
           </Text>
         </View>
       </View>

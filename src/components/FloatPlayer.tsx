@@ -16,6 +16,8 @@ const FloatingPlayer = ({ onPress, style }: FloatingPlayerProps) => {
     const index = await TrackPlayer.getCurrentTrack();
     const currentTrack = index !== null ? await TrackPlayer.getTrack(index) : null;
     setTrack(currentTrack);
+    console.log('Track in FloatingPlayer:', track);
+
   });
 
   useEffect(() => {
@@ -24,6 +26,8 @@ const FloatingPlayer = ({ onPress, style }: FloatingPlayerProps) => {
       if (index !== null) {
         const currentTrack = await TrackPlayer.getTrack(index);
         setTrack(currentTrack);
+        console.log('Track in FloatingPlayer:', track);
+
       }
     };
     fetchTrack();
@@ -49,7 +53,7 @@ const FloatingPlayer = ({ onPress, style }: FloatingPlayerProps) => {
       <Image source={{ uri: track.thumbnailM }} style={styles.image} />
       <View style={styles.textContainer}>
         <Text numberOfLines={1} style={styles.title}>{track.title}</Text>
-        <Text numberOfLines={1} style={styles.artist}>{}</Text>
+        <Text numberOfLines={1} style={styles.artist}>{track.artist || ''}</Text>
       </View>
       <View style={styles.controls}>
         <TouchableOpacity onPress={togglePlayback}>

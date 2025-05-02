@@ -13,6 +13,7 @@ import TrackPlayer from 'react-native-track-player';
 import { ZingChartService } from '../../services/zingChartServices';
 import { HomeService } from '../../services/homeServices';
 import { handlePlay } from '../../services/handlePlay';
+import FloatingPlayer from '../../components/FloatPlayer';
 
 const ZingChartHome = ({ navigation }: any) => {
   interface Song {
@@ -77,6 +78,12 @@ const ZingChartHome = ({ navigation }: any) => {
         contentContainerStyle={styles.listContent}
         showsVerticalScrollIndicator={false}
       />
+      <FloatingPlayer
+      style={{bottom:0}}
+                onPress={() =>
+                navigation.navigate('Song', { song: TrackPlayer.getCurrentTrack })
+            }
+          /> 
     </SafeAreaView>
   );
 };

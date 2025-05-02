@@ -27,7 +27,7 @@ export const FavoriteService = {
       throw error;
     }
   },
-  async getAllFavorite({ userId}: any) {
+  async getAllFavorite(userId: string) {
     try {
       const url = `${appInfo.BASE_URL}/song/favorite/getAll?userId=${userId}`;
       const response = await fetch(url);
@@ -40,7 +40,7 @@ export const FavoriteService = {
       }
 
       const data = JSON.parse(textResponse);
-      return data.isFavorite;
+      return data;
     } catch (error) {
       console.error('Error checking favorite:', error);
       throw error;

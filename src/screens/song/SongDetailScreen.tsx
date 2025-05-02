@@ -136,7 +136,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
         setCurrentSong({
           encodeId: trackObject.id,
           title: trackObject.title|| trackObject.name,
-          artistsNames: songData.artistsNames|| "unknow" ,
+          artistsNames: songData.artistsNames || "unknow" ,
           thumbnailM: trackObject.thumbnailM,
           url: trackObject.url,
           genreIds: songData?.genreIds
@@ -155,16 +155,11 @@ const SongDetailScreen = ({ navigation, route }: any) => {
     const trackChangedListener = TrackPlayer.addEventListener(Event.PlaybackTrackChanged, async ({ nextTrack }) => {
       
       const currentTrack = await TrackPlayer.getCurrentTrack();
-      if (isRepeat) {
-      
-        if (currentTrack !== null) {
+      if (isRepeat) {    
           await TrackPlayer.seekTo(0);
           await TrackPlayer.play();
-        }
-      } else {
-        console.log('Queue ended, and repeat is off.');
-      }
-      if(currentTrack) {
+      } 
+      else if(currentTrack) {
           const selectedItem = await TrackPlayer.getTrack(currentTrack);
           console.log("Track Changed, Current Track:", selectedItem)
           if(selectedItem){
@@ -228,7 +223,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
               } else if (currentSong.name) {
                 return currentSong.artist;
               } else {
-                return 'Unknown';
+                return 's';
               }
             })()}
             </Text> 

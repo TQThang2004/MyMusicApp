@@ -22,7 +22,7 @@ export const handlePlay = async (selectedItem: any, list:any, navigation:any, us
           id: item.encodeId,
           url: songData['128'] || songData['320'] || songData['256'],
           title: item.title,
-          artist: item.artistsNames || 'Unknown',
+          artist: item.artist || '',
           thumbnailM: item.thumbnailM,
         };
       })

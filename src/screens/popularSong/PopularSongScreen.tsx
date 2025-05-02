@@ -24,7 +24,7 @@ const PopularSongScreen = ({ route, navigation}: any) => {
       id: item.id,
       url: songData['128'] || songData['320'] || songData['256'],
       title: item.title,
-      artist: item.artist || 'Unknown',
+      artist: item.artist || '',
       artwork: item.thumbnailM,
     });
     await TrackPlayer.play();

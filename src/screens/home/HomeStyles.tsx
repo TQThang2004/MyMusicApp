@@ -29,7 +29,7 @@ const homeStyles = StyleSheet.create({
     paddingTop: 6,
   },
   bottom: {
-    height: 350,
+    height: 150,
     width: '100%',
     backgroundColor: '#fff',
   },
