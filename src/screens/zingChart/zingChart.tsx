@@ -10,6 +10,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import { SongItemComponent } from '../../components';
 import appInfo from '../../constants/appInfo';
 import { useFocusEffect } from '@react-navigation/native';
+
 interface SongProps {
   encodeId: string;
   title: string;

@@ -9,6 +9,8 @@ import {
   TextInput,
   Button,
   Alert,
+  Pressable,
+  Keyboard,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Entypo';
@@ -17,21 +19,34 @@ import { useFocusEffect} from '@react-navigation/native';
 import { SongItemComponent } from '../../components';
 import { PlaylistService } from '../../services/playlistServices';
 import appInfo from '../../constants/appInfo';
+import FloatingPlayer from '../../components/FloatPlayer';
+import TrackPlayer from 'react-native-track-player';
 
 
+interface PlaylistItem {
+  id: string;
+  name: string;
+  thumbnail: string;
+}
 const MyPlaylistScreen = ({navigation}:any) => {
 
   const { user } = useContext(AuthContext);
   const [name, setName] = useState('');
   const [modalVisible, setModalVisible] = useState(false);
 
-  interface PlaylistItem {
-    id: string;
-    name: string;
-    thumbnail: string;
-  }
   
   const [playlists, setPlaylists] = useState<PlaylistItem[]>([]);
+
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const showSub = Keyboard.addListener('keyboardDidShow', () => setKeyboardOpen(true));
+    const hideSub = Keyboard.addListener('keyboardDidHide', () => setKeyboardOpen(false));
+    return () => {
+      showSub.remove();
+      hideSub.remove();
+    };
+  }, []);
 
   
   const fetchPlaylists = async () => {
@@ -155,31 +170,40 @@ const MyPlaylistScreen = ({navigation}:any) => {
         <Ionicons name="add" size={32} color="white" />
       </TouchableOpacity>
 
-
+      { !keyboardOpen && (
+        <FloatingPlayer
+          onPress={() => navigation.navigate('Song', { song: TrackPlayer.getCurrentTrack })}
+        />
+      )}
 
       {/* Modal */}
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
+        <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
+          <Pressable style={styles.modalContainer} onPress={() => {}}>
+            <Text style={styles.modalTitle}>Nhập tên playlist</Text>
             <TextInput
-              placeholder="Nhập tên playlist"
+              placeholder="Tên playlist..."
               value={name}
               onChangeText={setName}
               style={styles.input}
             />
-            <Button title="Tạo Playlist" onPress={onPressCreatePlaylist} />
 
-            {/* Nút đóng modal */}
-            <TouchableOpacity onPress={() => setModalVisible(false)}>
-              <Text style={styles.closeButton}>Đóng</Text>
+            <TouchableOpacity style={styles.createButton} onPress={onPressCreatePlaylist}>
+              <Text style={styles.createButtonText}>Tạo Playlist</Text>
             </TouchableOpacity>
-          </View>
-        </View>
+
+            <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
+              <Text style={styles.closeButtonText}>Đóng</Text>
+            </TouchableOpacity>
+          </Pressable>
+        </Pressable>
+
+
       </Modal>
 
 
@@ -234,10 +258,10 @@ const styles = StyleSheet.create({
   addButton: {
     position: 'absolute',
     right: 24,
-    bottom: 56,
+    bottom: 140,
     backgroundColor: '#2196F3',
-    width: 52,
-    height: 52,
+    width: 65,
+    height: 65,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
@@ -245,30 +269,75 @@ const styles = StyleSheet.create({
 
   // Modal Styles
 
-  modalOverlay: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContainer: {
-    width: 300,
-    padding: 20,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
-    borderRadius: 8,
-    marginBottom: 12,
-    width: '100%',
-  },
+
   closeButton: {
     color: 'blue',
     marginTop: 10,
     fontSize: 16,
+  },
+  modalOverlay: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',  // làm tối hậu cảnh
+  },
+
+  // Container modal chính
+  modalContainer: {
+    width: '80%',                       // chiếm 80% chiều ngang màn hình
+    backgroundColor: '#fff',
+    borderRadius: 16,                   // bo tròn góc
+    paddingVertical: 20,
+    paddingHorizontal: 16,
+    // shadow iOS
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    // elevation Android
+    elevation: 10,
+  },
+
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginBottom: 12,
+    textAlign: 'center',
+    color: '#333',
+  },
+
+  input: {
+    borderWidth: 1,
+    borderColor: '#ddd',
+    borderRadius: 10,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginBottom: 16,
+    fontSize: 16,
+    backgroundColor: '#fafafa',
+  },
+
+  // Tạo button custom thay vì Button mặc định
+  createButton: {
+    backgroundColor: '#1DB954',
+    paddingVertical: 12,
+    borderRadius: 10,
+    alignItems: 'center',
+    marginBottom: 12,
+  },
+  createButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '500',
+  },
+
+  closeButton: {
+    alignSelf: 'center',
+    marginTop: 8,
+    padding: 8,
+  },
+  closeButtonText: {
+    color: '#888',
+    fontSize: 14,
   },
 });
