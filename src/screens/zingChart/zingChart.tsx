@@ -1,12 +1,15 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList } from 'react-native';
+import React, { useCallback, useContext, useState } from 'react';
+import { View, Text, StyleSheet, Image, TouchableOpacity, FlatList, Modal, Pressable, Alert } from 'react-native';
 import { ZingChartService } from '../../services/zingChartServices';
 import UpdateText from '../../components/UpdateText';
 import { HomeService } from '../../services/homeServices';
 import TrackPlayer from 'react-native-track-player';
 import { handlePlay } from '../../services/handlePlay';
 import { AuthContext } from '../../context/AuthContext';
-
+import Icon from 'react-native-vector-icons/Ionicons';
+import { SongItemComponent } from '../../components';
+import appInfo from '../../constants/appInfo';
+import { useFocusEffect } from '@react-navigation/native';
 interface SongProps {
   encodeId: string;
   title: string;
@@ -23,34 +26,57 @@ interface Props {
 
 const ZingChart: React.FC<Props> = ({ songs, navigation }:any) => {
 
+  const {user} = useContext(AuthContext);
+  const [selectedSong, setSelectedSong] = useState<SongProps | null>(null);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [myPlaylists, setMyPlaylists] = useState<{ id: string; thumbnail: string; name: string }[]>([]);
 
-  const {user} = useContext(AuthContext)
+  const fetchPlaylists = async () => {
+    try {
+      const response = await fetch(`${appInfo.BASE_URL}/main/get-playlist/${user.id}`);
+      const data = await response.json();
+      setMyPlaylists(data.playlist.result);
+    } catch (error) {
+      console.error('Lỗi khi tải playlist:', error);
+    }
+  };
 
-  // const handlePlay = async (item: any) => {
-  //   const songData = await HomeService.fetchSongDetails(item.encodeId);
-  //   const songInfoData = await HomeService.fetchInfoSongDetails(item.encodeId);
-  //   console.log('songInfoData', songInfoData);
-  //   if (!songData) return;
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) {
+        fetchPlaylists();
+      }
+    }, [user?.id])
+  );
 
-  //   console.log('songData', songData);
+  const handleAddSong = async (songId: string, playlistId: string) => {
+    try {
+      const response = await fetch(`${appInfo.BASE_URL}/main/add-song-to-playlist`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          playlistId: playlistId,
+          songId: songId
+        }),
+      });
 
-  //   await TrackPlayer.reset();
-  //   await TrackPlayer.add({
-  //     id: item.encodeId,
-  //     url: songData['128'] || songData['320'] || songData['256'],
-  //     title: item.title,
-  //     artist: item.artistsNames || 'Unknown',
-  //     artwork: item.thumbnailM,
-  //   });
-  //   await TrackPlayer.play();
-  //   console.log('Playing song:', item.title);
-  //   navigation.navigate('Song', { song: item });
-  // };
+      const result = await response.json();
+
+      if (result.success) {
+        Alert.alert('Thành công', 'Bài hát đã được thêm vào playlist!');
+        setModalVisible(false);
+      } else {
+        Alert.alert('Lỗi', result.message || 'Thêm bài hát thất bại');
+      }
+    } catch (error) {
+      console.error('Lỗi khi thêm bài hát:', error);
+      Alert.alert('Lỗi', 'Không thể thêm bài hát vào playlist');
+    }
+  };
 
 
   const renderItem = ({ item, index }: { item: SongProps; index: number }) => {
-
-
     return (
       <View style={styles.songRow}>
         <TouchableOpacity key={item.encodeId} onPress={() => handlePlay(item, songs, navigation, user)} style={{ flexDirection: 'row', alignItems: 'center', flex: 1}}>
@@ -68,10 +94,13 @@ const ZingChart: React.FC<Props> = ({ songs, navigation }:any) => {
             <Text numberOfLines={1} style={styles.artists}>{item.artistsNames}</Text>
           </View>
           
-          <TouchableOpacity style={{ width: 40, alignItems: 'center' }}>
-            <Text style={styles.more}>...</Text>
-          </TouchableOpacity>
+            <TouchableOpacity onPress={() => { setSelectedSong(item); setModalVisible(true); }}>
+                    <Icon name="add-circle-outline" size={27} color="#555" />
+              </TouchableOpacity>
         </TouchableOpacity>
+
+
+        
 
       </View>
     );
@@ -89,7 +118,38 @@ const ZingChart: React.FC<Props> = ({ songs, navigation }:any) => {
       <TouchableOpacity style={styles.seeAllButton} onPress={() => navigation.navigate('ZingChartHome')}>
         <Text style={styles.seeAllText}>Xem tất cả</Text>
       </TouchableOpacity>
+
+       {/* Modal thêm vào playlist */}
+       <Modal
+        animationType="fade"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
+          <Pressable style={styles.modalContainer} onPress={() => {}}>
+            <Text style={styles.modalTitle}>Add to playlist</Text>
+            {myPlaylists.length > 0 ? (
+              myPlaylists.map((playlist) => (
+                <SongItemComponent
+                  key={playlist.id}
+                  imageUrl={playlist.thumbnail}
+                  songName={playlist.name}
+                  artistName={user.username}
+                  onPress={() => selectedSong && handleAddSong(selectedSong.encodeId, playlist.id)}
+                />
+              ))
+            ) : (
+              <Text style={{ color: '#999' }}>Bạn chưa có playlist nào</Text>
+            )}
+          </Pressable>
+        </Pressable>
+      </Modal>
+
+
+
     </View>
+    
   );
 };
 
@@ -163,6 +223,35 @@ const styles = StyleSheet.create({
     color: '#1DB954',
     fontWeight: '600',
     fontSize: 14,
+  },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContainer: {
+    width: '80%',
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 20,
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  playlistItem: {
+    padding: 10,
+    borderBottomColor: '#ddd',
+    borderBottomWidth: 1,
+  },
+  closeButton: {
+    marginTop: 10,
+    backgroundColor: 'black',
+    padding: 10,
+    alignItems: 'center',
+    borderRadius: 6,
   },
 });
 
