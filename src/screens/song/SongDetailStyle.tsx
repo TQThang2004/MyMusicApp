@@ -66,6 +66,35 @@ const styles = StyleSheet.create({
       padding: 18,
       borderRadius: 40,
     },
+    modalOverlay: {
+      flex: 1,
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContainer: {
+      width: '80%',
+      backgroundColor: '#fff',
+      borderRadius: 10,
+      padding: 20,
+    },
+    modalTitle: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      marginBottom: 10,
+    },
+    playlistItem: {
+      padding: 10,
+      borderBottomColor: '#ddd',
+      borderBottomWidth: 1,
+    },
+    closeButton: {
+      marginTop: 10,
+      backgroundColor: 'black',
+      padding: 10,
+      alignItems: 'center',
+      borderRadius: 6,
+    },
   });
 
   export default styles;

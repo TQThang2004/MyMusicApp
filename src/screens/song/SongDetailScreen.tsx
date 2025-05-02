@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { View, Text, Image, TouchableOpacity, Alert } from 'react-native';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { View, Text, Image, TouchableOpacity, Alert, Modal, Pressable } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import Entypo from 'react-native-vector-icons/Entypo';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
@@ -14,6 +14,10 @@ import LyricsScreen from './LyricScreen';
 import { Dimensions } from 'react-native';
 import { HistoryService } from '../../services/historyService';
 import { HomeService } from '../../services/homeServices';
+import Icon from 'react-native-vector-icons/Ionicons';
+import appInfo from '../../constants/appInfo';
+import { useFocusEffect } from '@react-navigation/native';
+import { SongItemComponent } from '../../components';
 
 
 const SongDetailScreen = ({ navigation, route }: any) => {
@@ -25,8 +29,12 @@ const SongDetailScreen = ({ navigation, route }: any) => {
   const [isShuffle, setIsShuffle] = useState(false);
   const [isRepeat, setIsRepeat] = useState(false);
   const progress = useProgress();
-
+  const [myPlaylists, setMyPlaylists] = useState<{ id: string, name:string,thumbnail:string, songs:[] }[]>([])
   const { width } = Dimensions.get('window');
+  const [modalVisible, setModalVisible] = useState(false);
+  const openModal = () => setModalVisible(true);
+
+
 
 
   const togglePlayPause = async () => {
@@ -187,6 +195,59 @@ const SongDetailScreen = ({ navigation, route }: any) => {
     await TrackPlayer.seekTo(value);
   };
 
+
+  const fetchPlaylists = async () => {
+    try {
+      console.log('Fetching playlists for user ID:', user.id);
+      const response = await fetch(`${appInfo.BASE_URL}/main/get-playlist/${user.id}`);
+      const data = await response.json();
+      console.log('MyPlaylist data:', data);
+      setMyPlaylists(data.playlist.result);
+    } catch (error) {
+      console.error('Lỗi khi tải playlist:', error);
+    }
+  };
+  
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) {
+        fetchPlaylists();
+      }
+    }, [user?.id])
+  );
+
+  const handleAddSong = async (songId: string, playlistId:string) => {
+    try {
+      const response = await fetch(`${appInfo.BASE_URL}/main/add-song-to-playlist`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ 
+          userId: user.id,
+          playlistId: playlistId,
+          songId: songId 
+        }),
+      });
+  
+      const result = await response.json();
+  
+      if (result.success) {
+        Alert.alert('Thành công', 'Bài hát đã được thêm vào playlist!', [
+          { 
+            text: 'OK', 
+            onPress: () => navigation.goBack()
+          }
+        ]);
+      } else {
+        Alert.alert('Lỗi', result.message || 'Thêm bài hát thất bại');
+      }
+    } catch (error) {
+      console.error('Lỗi khi thêm bài hát:', error);
+      Alert.alert('Lỗi', 'Không thể thêm bài hát vào playlist');
+    }
+  };
+
   return (
       
         <ScrollView 
@@ -231,15 +292,57 @@ const SongDetailScreen = ({ navigation, route }: any) => {
 
             <View style={styles.iconRow}>
             <TouchableOpacity onPress={handleLikePress}>
-            <AntDesign
-              name={liked ? 'heart' : 'hearto'} 
-              size={24}
-              color={liked ? 'red' : 'black'}
-            />
-          </TouchableOpacity>
-              <TouchableOpacity>
-                <Entypo name="dots-three-horizontal" size={20} />
-              </TouchableOpacity>
+              <AntDesign
+                name={liked ? 'heart' : 'hearto'} 
+                size={24}
+                color={liked ? 'red' : 'black'}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={openModal}>
+                <Icon name="add-circle-outline" size={30} color="#555" />
+            </TouchableOpacity>
+
+
+            <Modal
+              animationType="fade"
+              transparent={true}
+              visible={modalVisible}
+              onRequestClose={() => setModalVisible(false)}
+            >
+              <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
+                <Pressable style={styles.modalContainer} onPress={() => {}}>
+                  <Text style={styles.modalTitle}>Add to Playlist</Text>
+                  {myPlaylists.length > 0 ? (
+                    myPlaylists.map((playlist, index) => (
+                      // <TouchableOpacity
+                      //   key={index}
+                      //   style={styles.playlistItem}
+                      //   onPress={() => handleAddSong(currentSong.encodeId, playlist.id)}
+
+                      // >
+                      //   <Text>{playlist.name}</Text>
+                      // </TouchableOpacity>
+                      <SongItemComponent
+                      key={playlist.id}
+                      imageUrl={playlist.thumbnail}
+                      songName={playlist.name}
+                      artistName={user.username}
+                      onPress={() => handleAddSong(currentSong.encodeId, playlist.id)}
+                    />
+                    ))
+                  ) : (
+                    <Text style={{ color: '#999' }}>Bạn chưa có playlist nào</Text>
+                  )}
+                  {/* <TouchableOpacity onPress={() => setModalVisible(false)} style={styles.closeButton}>
+                    <Text style={{ color: 'white' }}>Close</Text>
+                  </TouchableOpacity> */}
+                </Pressable>
+              </Pressable>
+            </Modal>
+
+
+
             </View>
 
           <Slider

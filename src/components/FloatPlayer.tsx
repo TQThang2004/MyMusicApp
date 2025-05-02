@@ -53,7 +53,28 @@ const FloatingPlayer = ({ onPress, style }: FloatingPlayerProps) => {
       <Image source={{ uri: track.thumbnailM }} style={styles.image} />
       <View style={styles.textContainer}>
         <Text numberOfLines={1} style={styles.title}>{track.title}</Text>
-        <Text numberOfLines={1} style={styles.artist}>{track.artist || ''}</Text>
+        {/* <Text numberOfLines={1} style={styles.artist}>{track.artist || ''}</Text> */}
+        <Text style={styles.artist}>
+        {(() => {
+          if (Array.isArray(track.artists)) {
+            return track.artists.map((a: { name: any; }) => a.name || a).join(', ');
+          } else if (track.artistsNames) {
+            return track.artistsNames;
+          } else if (Array.isArray(track.artist)) {
+            return track.artist.map((a: { name: any; }) => a.name || a).join(', ');
+          } else if (typeof track.artist === 'string') {
+            return track.artist;
+          } else if (typeof track.artist === undefined) {
+            return "track.artist";
+          } else if (track.name) {
+            return track.name;
+          } else {
+            console.log("track.ảtist",track.artist)
+            return 'Unknown';
+          }
+        })()}
+
+            </Text> 
       </View>
       <View style={styles.controls}>
         <TouchableOpacity onPress={togglePlayback}>
