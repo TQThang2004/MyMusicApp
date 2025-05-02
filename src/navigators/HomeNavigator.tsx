@@ -17,6 +17,7 @@ const HomeNavigator = () => {
         headerShown: false,
         swipeEnabled: true,
         tabBarShowLabel: true,
+        tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: '#1DB954', 
         tabBarInactiveTintColor: 'gray', 
         tabBarStyle: {
