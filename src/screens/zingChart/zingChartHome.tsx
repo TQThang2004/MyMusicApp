@@ -38,10 +38,10 @@ interface Song {
 }
 
 const ZingChartHome = ({ navigation }: any) => {
-  
-  
+
+
   const [chartSongs, setChartSongs] = useState<Song[]>([]);
-  const {user} = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
   const [selectedSong, setSelectedSong] = useState<SongProps | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
   const [myPlaylists, setMyPlaylists] = useState<{ id: string; thumbnail: string; name: string }[]>([]);
@@ -63,7 +63,7 @@ const ZingChartHome = ({ navigation }: any) => {
       const data = await response.json();
       setMyPlaylists(data.playlist.result);
     } catch (error) {
-      console.error('Lỗi khi tải playlist:', error);
+      console.log('Lỗi khi tải playlist:', error);
     }
   };
 
@@ -96,12 +96,12 @@ const ZingChartHome = ({ navigation }: any) => {
         Alert.alert('Lỗi', result.message || 'Thêm bài hát thất bại');
       }
     } catch (error) {
-      console.error('Lỗi khi thêm bài hát:', error);
+      console.log('Lỗi khi thêm bài hát:', error);
       Alert.alert('Lỗi', 'Không thể thêm bài hát vào playlist');
     }
   };
 
-  
+
   const renderItem = ({ item, index }: any) => (
     <TouchableOpacity
       style={styles.item}
@@ -122,7 +122,7 @@ const ZingChartHome = ({ navigation }: any) => {
         </Text>
       </View>
       <TouchableOpacity onPress={() => { setSelectedSong(item); setModalVisible(true); }}>
-            <Icon name="add-circle-outline" size={22} color="#555" />
+        <Icon name="add-circle-outline" size={22} color="#555" />
       </TouchableOpacity>
     </TouchableOpacity>
   );
@@ -145,22 +145,22 @@ const ZingChartHome = ({ navigation }: any) => {
         showsVerticalScrollIndicator={false}
       />
       <FloatingPlayer
-      style={{bottom:0}}
-                onPress={() =>
-                navigation.navigate('Song', { song: TrackPlayer.getCurrentTrack })
-            }
-          /> 
+        style={{ bottom: 0 }}
+        onPress={() =>
+          navigation.navigate('Song', { song: TrackPlayer.getCurrentTrack })
+        }
+      />
 
 
-          {/* Modal thêm vào playlist */}
-       <Modal
+      {/* Modal thêm vào playlist */}
+      <Modal
         animationType="fade"
         transparent={true}
         visible={modalVisible}
         onRequestClose={() => setModalVisible(false)}
       >
         <Pressable style={styles.modalOverlay} onPress={() => setModalVisible(false)}>
-          <Pressable style={styles.modalContainer} onPress={() => {}}>
+          <Pressable style={styles.modalContainer} onPress={() => { }}>
             <Text style={styles.modalTitle}>Add to playlist</Text>
             {myPlaylists.length > 0 ? (
               myPlaylists.map((playlist) => (

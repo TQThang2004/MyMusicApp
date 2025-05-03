@@ -11,7 +11,7 @@ export const ArtistService = {
       const data = await response.json();
       return data.data; 
     } catch (error) {
-      console.error('Error fetching artist:', error);
+      console.log('Error fetching artist:', error);
       return null;
     }
   },

@@ -12,6 +12,7 @@ import LyricsScreen from '../screens/song/LyricScreen';
 import PlaylistScreen from '../screens/playlist/PlayListScreen';
 import AddSongScreen from '../screens/playlist/AddSongScreen';
 import FavoritePlaylistScreen from '../screens/playlist/FavoritePlaylistScreen';
+import MyPlaylistScreen from '../screens/playlist/MyPlaylistScreen';
 // import CreatePlaylistScreen from '../screens/playlist/CreatePlaylistScreen';
 
 
@@ -30,7 +31,8 @@ const MainNavigator = () => {
       <Stack.Screen name="OnePlaylist" component={OnePlaylistScreen} />
       <Stack.Screen name="AddSong" component={AddSongScreen}/>
       <Stack.Screen name="OneMyPlaylist" component={OneMyPlaylistScreen} />
-      <Stack.Screen name="ZingChartHome" component={ZingChartHome} />
+      <Stack.Screen name="ZingChartHome" component={ZingChartHome}/>
+      <Stack.Screen name="MyPlaylist" component={MyPlaylistScreen} />
       {/* <Stack.Screen name="CreatePlaylist" component={CreatePlaylistScreen} /> */}
       <Stack.Screen name="Lyrics" component={LyricsScreen} />
       <Stack.Screen name="FavoritePlaylist" component={FavoritePlaylistScreen} />

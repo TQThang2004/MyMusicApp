@@ -23,7 +23,7 @@ export const FavoriteService = {
       const data = JSON.parse(textResponse);
       return data.isFavorite;
     } catch (error) {
-      console.error('Error checking favorite:', error);
+      console.log('Error checking favorite:', error);
       throw error;
     }
   },
@@ -42,7 +42,7 @@ export const FavoriteService = {
       const data = JSON.parse(textResponse);
       return data;
     } catch (error) {
-      console.error('Error checking favorite:', error);
+      console.log('Error checking favorite:', error);
       throw error;
     }
   },
@@ -74,9 +74,9 @@ export const FavoriteService = {
       return data;
     } catch (error) {
       if (error instanceof Error) {
-        console.error('Error adding to favorite:', error.message);
+        console.log('Error adding to favorite:', error.message);
       } else {
-        console.error('Error adding to favorite:', error);
+        console.log('Error adding to favorite:', error);
       }
       throw error;
     }
@@ -99,7 +99,7 @@ export const FavoriteService = {
       }
       return data;
     } catch (error) {
-      console.error('Error removing from favorite:', error);
+      console.log('Error removing from favorite:', error);
       throw error;
     }
   },

@@ -93,7 +93,7 @@ const SearchScreen = ({ navigation }: any) => {
 
       setResults(uniqueResults);
     } catch (err) {
-      console.error('Search error:', err);
+      console.log('Search error:', err);
       setResults([]);
     }
   };
@@ -137,7 +137,7 @@ const SearchScreen = ({ navigation }: any) => {
         ]);
       }
     } catch (error: any) {
-      console.error('Lỗi khi gửi tin nhắn tới Rasa:', error.message);
+      console.log('Lỗi khi gửi tin nhắn tới Rasa:', error.message);
       setChatMessages((prev) => [
         ...prev,
         { sender: 'bot', text: 'Có lỗi xảy ra khi gửi tin nhắn.' },
@@ -312,11 +312,11 @@ const styles = StyleSheet.create({
     backgroundColor: '#F0F0F0',
     borderRadius: 14,
     paddingHorizontal: 18,
-    paddingVertical: 14,
+    paddingVertical: 10,
     fontSize: 18,
   },
   topResult: {
-    fontSize: 22,
+    fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 14,
   },

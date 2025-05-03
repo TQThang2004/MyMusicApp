@@ -16,7 +16,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Icon from 'react-native-vector-icons/Entypo';
 import { AuthContext } from '../../context/AuthContext';
 import { useFocusEffect} from '@react-navigation/native';
-import { SongItemComponent } from '../../components';
+import { SongItemComponent, TextComponent } from '../../components';
 import { PlaylistService } from '../../services/playlistServices';
 import appInfo from '../../constants/appInfo';
 import FloatingPlayer from '../../components/FloatPlayer';
@@ -57,7 +57,7 @@ const MyPlaylistScreen = ({navigation}:any) => {
       console.log('Playlist data:', data);
       setPlaylists(data.playlist.result);
     } catch (error) {
-      console.error('Lỗi khi tải playlist:', error);
+      console.log('Lỗi khi tải playlist:', error);
     }
   };
 
@@ -115,7 +115,7 @@ const MyPlaylistScreen = ({navigation}:any) => {
                 console.log('Xóa thất bại:', data.message);
               }
             } catch (error) {
-              console.error('Lỗi khi xóa playlist:', error);
+              console.log('Lỗi khi xóa playlist:', error);
             }
           },
         },
@@ -128,8 +128,7 @@ const MyPlaylistScreen = ({navigation}:any) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.title}>My Playlists</Text>
-        <Ionicons name="search" size={22} color="black" />
+        <TextComponent text='My Playlist' title color='black'/>
       </View>
 
       {/* Playlist list */}
@@ -258,10 +257,10 @@ const styles = StyleSheet.create({
   addButton: {
     position: 'absolute',
     right: 24,
-    bottom: 140,
-    backgroundColor: '#2196F3',
-    width: 65,
-    height: 65,
+    bottom: 130,
+    backgroundColor: '#73a3f0',
+    width: 55,
+    height: 55,
     borderRadius: 16,
     justifyContent: 'center',
     alignItems: 'center',
@@ -270,7 +269,7 @@ const styles = StyleSheet.create({
   // Modal Styles
 
 
-  closeButton: {
+  closeButtonTextStyle: {
     color: 'blue',
     marginTop: 10,
     fontSize: 16,

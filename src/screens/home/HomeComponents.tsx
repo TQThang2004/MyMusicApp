@@ -44,7 +44,7 @@ const HomeComponents = (props: any) => (
             <Text style={homeStyles.textSeeAll}>See all</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10, marginBottom: 20 }}>
           {props.recommendation.map((playlist: any) => (
             <TouchableOpacity
               key={playlist.encodeId}
@@ -79,7 +79,7 @@ const HomeComponents = (props: any) => (
             <Text style={homeStyles.textSeeAll}>See all</Text>
           </TouchableOpacity>
         </View>
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10, marginBottom: 20 }}>
           {props.newReleaseSongs.map((playlist: any) => (
             <TouchableOpacity
               key={playlist.encodeId}
@@ -100,7 +100,34 @@ const HomeComponents = (props: any) => (
       </>
     )}
 
-    
+    {/* Artists - Only show if data exists */}
+    {props.artists?.length > 0 && (
+
+console.log("props: -------",props),
+<>
+  <View style={homeStyles.flex}>
+    <Text style={homeStyles.sectionTitle}>Artists</Text>
+    <TouchableOpacity onPress={() => props.navigation.navigate('FavoriteArtist')}>
+      <Text style={homeStyles.textSeeAll}>See all</Text>
+    </TouchableOpacity>
+  </View>
+  <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
+    {props.artists.map((artist:any) => (
+      <TouchableOpacity 
+        key={artist.id} 
+        style={homeStyles.artistCard}
+        onPress={() => props.navigation.navigate('ArtistScreen', { artist })}
+      >
+        <Image 
+          source={{ uri: artist.thumbnail }} 
+          style={homeStyles.artistImage} 
+        />
+        <Text style={homeStyles.cardTitle}>{artist.name}</Text>
+      </TouchableOpacity>
+    ))}
+  </ScrollView>
+</>
+)}
 
     {/* Chill Playlists - Only show if data exists */}
     {props.chillPlaylists?.length > 0 && (
@@ -117,7 +144,7 @@ const HomeComponents = (props: any) => (
               <Text style={homeStyles.textSeeAll}>See all</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
+          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10, marginBottom: 20 }}>
             {props.chillPlaylists.map((playlist:any) => (
                 <TouchableOpacity
                     key={playlist.encodeId}
@@ -144,35 +171,6 @@ const HomeComponents = (props: any) => (
           </ScrollView>
         </>
       )}
-    {/* Artists - Only show if data exists */}
-    {props.artists?.length > 0 && (
-
-        console.log("props: -------",props),
-        <>
-          <View style={homeStyles.flex}>
-            <Text style={homeStyles.sectionTitle}>Artists</Text>
-            <TouchableOpacity onPress={() => props.navigation.navigate('FavoriteArtist')}>
-              <Text style={homeStyles.textSeeAll}>See all</Text>
-            </TouchableOpacity>
-          </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingLeft: 10 }}>
-            {props.artists.map((artist:any) => (
-              <TouchableOpacity 
-                key={artist.id} 
-                style={homeStyles.artistCard}
-                onPress={() => props.navigation.navigate('ArtistScreen', { artist })}
-              >
-                <Image 
-                  source={{ uri: artist.thumbnail }} 
-                  style={homeStyles.artistImage} 
-                />
-                <Text style={homeStyles.cardTitle}>{artist.name}</Text>
-              </TouchableOpacity>
-            ))}
-          </ScrollView>
-        </>
-      )}
-  
     
     {/* Zing Chart */}
     {props.zingChart?.length > 0 && (

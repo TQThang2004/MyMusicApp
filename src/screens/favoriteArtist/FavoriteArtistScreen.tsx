@@ -27,7 +27,7 @@ const FavoriteArtistScreen = ({ navigation }: any) => {
           }));
           setArtists(fetchedArtists);
         } catch (error) {
-          console.error('Lỗi khi lấy artists từ Firebase:', error);
+          console.log('Lỗi khi lấy artists từ Firebase:', error);
         }
       };
   

@@ -11,7 +11,7 @@ export const ZingChartService = {
       const data = await response.json();
       return data.data; 
     } catch (error) {
-      console.error('Error fetching song details:', error);
+      console.log('Error fetching song details:', error);
       return null;
     }
   },

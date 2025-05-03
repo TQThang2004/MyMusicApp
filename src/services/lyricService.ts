@@ -6,7 +6,7 @@ export const LyricService = {
 
     async fetchLyric(encodeID:string) {
         if (!encodeID) {
-            console.error('Invalid encodeId');
+            console.log('Invalid encodeId');
             return null;
           }
     
@@ -20,7 +20,7 @@ export const LyricService = {
           // console.log('Data:', data.data.lyric);
           return data.data.lyric; 
         } catch (error) {
-          console.error('Error fetching song details:', error);
+          console.log('Error fetching song details:', error);
           return null;
         }
       },

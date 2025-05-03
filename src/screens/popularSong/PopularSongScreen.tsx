@@ -40,7 +40,7 @@ const PopularSongScreen = ({ route, navigation }: any) => {
       const data = await response.json();
       setMyPlaylists(data.playlist.result);
     } catch (error) {
-      console.error('Lỗi khi tải playlist:', error);
+      console.log('Lỗi khi tải playlist:', error);
     }
   };
 
@@ -73,7 +73,7 @@ const PopularSongScreen = ({ route, navigation }: any) => {
         Alert.alert('Lỗi', result.message || 'Thêm bài hát thất bại');
       }
     } catch (error) {
-      console.error('Lỗi khi thêm bài hát:', error);
+      console.log('Lỗi khi thêm bài hát:', error);
       Alert.alert('Lỗi', 'Không thể thêm bài hát vào playlist');
     }
   };

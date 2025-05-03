@@ -33,13 +33,13 @@ export const HomeService = {
       return artists;
     } catch (error) {
       if (error instanceof Error) {
-        console.error('8. Lỗi chi tiết:', {
+        console.log('8. Lỗi chi tiết:', {
           code: (error as any).code,
           message: error.message,
           stack: error.stack
         });
       } else {
-        console.error('8. Lỗi không xác định:', error);
+        console.log('8. Lỗi không xác định:', error);
       }
       return [];
     }
@@ -52,14 +52,14 @@ export const HomeService = {
       console.log('fecth Home Data', json.data);
       return json.data?.items || [];
     } catch (error) {
-      console.error('Lỗi khi fetch API:', error);
+      console.log('Lỗi khi fetch API:', error);
       return [];
     }
   },
 
   async fetchSongDetails(encodeId: string) {
     if (!encodeId) {
-      console.error('Invalid encodeId');
+      console.log('Invalid encodeId');
       return null;
     }
     try {
@@ -67,13 +67,13 @@ export const HomeService = {
       const data = await response.json();
       return data.data;
     } catch (error) {
-      console.error('Error fetching song details:', error);
+      console.log('Error fetching song details:', error);
       return null;
     }
   },
   async fetchRecommendation(userId: string) {
     if (!userId) {
-      console.error('Invalid userId in fetchRecommendation');
+      console.log('Invalid userId in fetchRecommendation');
       return null;
     }
     try {
@@ -82,13 +82,13 @@ export const HomeService = {
 
       if (!response.ok) {
         const text = await response.text();
-        console.error('Lỗi từ server:', text);
+        console.log('Lỗi từ server:', text);
         return null;
       }
 
       if (!contentType?.includes('application/json')) {
         const text = await response.text();
-        console.error('Server không trả về JSON:', text);
+        console.log('Server không trả về JSON:', text);
         return null;
       }
 
@@ -98,13 +98,13 @@ export const HomeService = {
       console.log('data:', data.recommendations);
       return data.recommendations;
     } catch (error) {
-      console.error('Error fetching song details:', error);
+      console.log('Error fetching song details:', error);
       return null;
     }
   },
   async fetchInfoSongDetails(encodeId: string) {
     if (!encodeId) {
-      console.error('Invalid encodeId');
+      console.log('Invalid encodeId');
       return null;
     }
     try {
@@ -112,14 +112,14 @@ export const HomeService = {
       const data = await response.json();
       return data.data;
     } catch (error) {
-      console.error('Error fetching song details:', error);
+      console.log('Error fetching song details:', error);
       return null;
     }
   },
 
   async fetchPlaylist(encodeId: string) {
     if (!encodeId) {
-      console.error('Invalid encodeId');
+      console.log('Invalid encodeId');
       return null;
     }
     try {
@@ -131,7 +131,7 @@ export const HomeService = {
       console.log("JSON data:", data);
       return data.data;
     } catch (error) {
-      console.error('Error fetching playlist details:', error);
+      console.log('Error fetching playlist details:', error);
       return null;
     }
   }

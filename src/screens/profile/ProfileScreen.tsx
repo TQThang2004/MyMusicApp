@@ -19,7 +19,7 @@ const handleLogout = async () => {
     await auth().signOut();
     console.log('User signed out!');
   } catch (error) {
-    console.error('Error signing out:', error);
+    console.log('Error signing out:', error);
   }
 };
 

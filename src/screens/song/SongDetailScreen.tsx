@@ -97,7 +97,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
       console.log("isFav",isFav)
       setLiked(isFav);
     } catch (error) {
-      console.error('Error checking if song is liked:', error);
+      console.log('Error checking if song is liked:', error);
     }
   };
 
@@ -114,7 +114,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
           await TrackPlayer.skipToNext();
         }
       } catch (error) {
-        console.error('Error skipping to next track:', error);
+        console.log('Error skipping to next track:', error);
       }
     }
     
@@ -154,7 +154,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
         console.log('Track not found.');
       }
     } catch (error) {
-      console.error('Error setting up player:', error);
+      console.log('Error setting up player:', error);
     }
   }
   
@@ -174,7 +174,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
             HistoryService.addSongToHistory(
               user.id,
               selectedItem.id,
-            ).catch(error => console.error('Failed to add to history:', error));
+            ).catch(error => console.log('Failed to add to history:', error));
           }
       }
       setupPlayer()
@@ -204,7 +204,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
       console.log('MyPlaylist data:', data);
       setMyPlaylists(data.playlist.result);
     } catch (error) {
-      console.error('Lỗi khi tải playlist:', error);
+      console.log('Lỗi khi tải playlist:', error);
     }
   };
   
@@ -243,7 +243,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
         Alert.alert('Lỗi', result.message || 'Thêm bài hát thất bại');
       }
     } catch (error) {
-      console.error('Lỗi khi thêm bài hát:', error);
+      console.log('Lỗi khi thêm bài hát:', error);
       Alert.alert('Lỗi', 'Không thể thêm bài hát vào playlist');
     }
   };
@@ -261,9 +261,7 @@ const SongDetailScreen = ({ navigation, route }: any) => {
             <TouchableOpacity onPress={() => navigation.goBack()}>
               <AntDesign name="down" size={24} />
             </TouchableOpacity>
-            <TouchableOpacity>
-              <Entypo name="dots-three-horizontal" size={20} />
-            </TouchableOpacity>
+            
           </View>
 
           <Image

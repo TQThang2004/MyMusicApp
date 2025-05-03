@@ -21,8 +21,10 @@ const HomeNavigator = () => {
         tabBarActiveTintColor: '#1DB954', 
         tabBarInactiveTintColor: 'gray', 
         tabBarStyle: {
-          backgroundColor: 'white',
-          opacity: 0.7,
+          backgroundColor: '#e3f7ff',
+          borderTopLeftRadius: 15,
+          borderTopRightRadius: 15,
+          opacity: 0.9,
           position: 'absolute',
           bottom: 0,
           left: 0,
@@ -54,7 +56,7 @@ const HomeNavigator = () => {
         {(props) => <HomeScreen {...props} setIsBottomSheetOpen={setIsBottomSheetOpen} />}
       </Tab.Screen>
       <Tab.Screen name="Search" component={SearchScreen} />
-      <Tab.Screen name="PlayList" component={MyPlaylistScreen} />
+      <Tab.Screen name="MyPlayList" component={MyPlaylistScreen} />
       <Tab.Screen name="Profile" component={ProfileScreen} />
     </Tab.Navigator>
     </>

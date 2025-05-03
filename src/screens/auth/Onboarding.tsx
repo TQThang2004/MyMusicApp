@@ -28,9 +28,9 @@ const Onboarding = ({ navigation }: { navigation: any }) => {
             >
                 <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
                     <View style={{ justifyContent: 'flex-start', width: '90%' }}>
-                        <Text style={styles.title}>Music for your</Text>
-                        <Text style={styles.subtitle}><Text style={styles.highlight}>wellbeing</Text></Text>
-                        <Text style={styles.description}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fringilla in sed risus sit.</Text>
+                        <Text style={styles.title}>Listen Anytime</Text>
+                        <Text style={styles.subtitle}><Text style={styles.highlight}>Unlimited Music</Text></Text>
+                        <Text style={styles.description}>Easily discover and play millions of songs anytime, anywhere — just a tap away.</Text>
                     </View>
                     <Image
                         source={require('../../assets/images/onboarding.png')}
@@ -39,9 +39,9 @@ const Onboarding = ({ navigation }: { navigation: any }) => {
                 </View>
                 <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
                     <View style={{ justifyContent: 'flex-start', width: '90%' }}>
-                        <Text style={styles.title}>Trinh Quang Thang</Text>
-                        <Text style={styles.subtitle}><Text style={styles.highlight}>wellbeing</Text></Text>
-                        <Text style={styles.description}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fringilla in sed risus sit.</Text>
+                        <Text style={styles.title}>Your Vibe</Text>
+                        <Text style={styles.subtitle}><Text style={styles.highlight}>Smart Suggestions</Text></Text>
+                        <Text style={styles.description}>Personalized recommendations help you find the perfect song for every mood.</Text>
                     </View>
                     <Image
                         source={require('../../assets/images/onboarding.png')}
@@ -50,9 +50,9 @@ const Onboarding = ({ navigation }: { navigation: any }) => {
                 </View>
                 <View style={{ flex: 1, flexDirection: 'column', justifyContent: 'space-between', alignItems: 'center' }}>
                     <View style={{ justifyContent: 'flex-start', width: '90%' }}>
-                        <Text style={styles.title}>I love You</Text>
-                        <Text style={styles.subtitle}><Text style={styles.highlight}>wellbeing</Text></Text>
-                        <Text style={styles.description}>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fringilla in sed risus sit.</Text>
+                        <Text style={styles.title}>No Interruptions</Text>
+                        <Text style={styles.subtitle}><Text style={styles.highlight}>Ad-Free Listening</Text></Text>
+                        <Text style={styles.description}>Enjoy seamless, high-quality music with no ads — just pure sound.</Text>
                     </View>
                     <Image
                         source={require('../../assets/images/onboarding.png')}

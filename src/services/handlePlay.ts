@@ -48,7 +48,7 @@ export const handlePlay = async (selectedItem: any, list:any, navigation:any, us
     HistoryService.addSongToHistory(
           user.id,
           selectedItem.encodeId,
-        ).catch(error => console.error('Failed to add to history:', error));
+        ).catch(error => console.log('Failed to add to history:', error));
 };
 
 

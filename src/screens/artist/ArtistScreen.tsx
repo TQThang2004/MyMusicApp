@@ -27,7 +27,7 @@ const ArtistScreen = ({ route, navigation }: any) => {
             console.log("-----------",data.data.song.items)
             setPlaylist(data.data.song.items)
           } catch (error) {
-            console.error('Error fetching playlist details:', error);
+            console.log('Error fetching playlist details:', error);
             Alert.alert('Error', 'Could not load playlist details');
           }
         }

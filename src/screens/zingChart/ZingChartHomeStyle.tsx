@@ -73,7 +73,7 @@ const styles = StyleSheet.create({
     color: '#888',
   },
   listContent: {
-    paddingHorizontal: 16,
+    paddingHorizontal: 5,
     paddingBottom: 20,
   },
   modalOverlay: {

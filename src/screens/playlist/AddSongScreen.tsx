@@ -45,7 +45,7 @@ const AddSongScreen = ({ route, navigation }: any) => {
         Alert.alert('Thành công', 'Bài hát đã được thêm vào playlist!', [
           { 
             text: 'OK', 
-            onPress: () => navigation.goBack()
+            onPress: () => navigation.navigate('MyPlaylist')
           }
         ]);
       } else {

@@ -40,7 +40,7 @@ const OneMyPlaylistScreen = ({ route, navigation }: any) => {
                 const data = await response.json();
                 setList(data.data.songs);
             } catch (error) {
-                console.error('Error fetching playlist details:', error);
+                console.log('Error fetching playlist details:', error);
                 Alert.alert('Error', 'Could not load playlist details');
             }
         };
@@ -296,11 +296,11 @@ const styles = StyleSheet.create({
     },
     floatingButton: {
         position: 'absolute',
-        bottom: 70,
+        bottom: 80,
         right: 30,
-        backgroundColor: '#92c0e8',
-        width: 50,
-        height: 50,
+        backgroundColor: '#73a3f0',
+        width: 55,
+        height: 55,
         borderRadius: 10,
         justifyContent: 'center',
         alignItems: 'center',

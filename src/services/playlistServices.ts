@@ -12,7 +12,7 @@ export const PlaylistService = {
 
   async fetchDetailPlaylist(playlistId:string) {
     if (!playlistId) {
-        console.error('Invalid encodeId');
+        console.log('Invalid encodeId');
         return null;
       }
 
@@ -28,7 +28,7 @@ export const PlaylistService = {
       console.log('Data:', data);
       return data; 
     } catch (error) {
-      console.error('Error fetching song details:', error);
+      console.log('Error fetching song details:', error);
       return null;
     }
   },

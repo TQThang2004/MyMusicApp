@@ -157,6 +157,7 @@ const HomeScreen = ({ navigation, setIsBottomSheetOpen }: any) => {
             handleOpenBottomSheet={handleOpenBottomSheet}
           />
         )}
+        showsVerticalScrollIndicator={false}
       />
 
         <FloatingPlayer
